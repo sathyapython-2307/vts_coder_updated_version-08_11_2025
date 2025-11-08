@@ -1,0 +1,138 @@
+/* Remove blue border from user type toggle */
+.btn-outline-primary,
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary:focus-visible,
+.btn-outline-primary:focus-within {
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+/* Force override for Bootstrap outline-primary checked state */
+.btn-outline-primary.btn-check:checked + .btn-outline-primary,
+.btn-check:checked + .btn-outline-primary,
+.btn-outline-primary.active, .btn-outline-primary:active, .show > .btn-outline-primary.dropdown-toggle {
+    background-color: #FF0488 !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(255,4,136,0.10);
+}
+/* User type toggle custom color */
+.btn-check:checked + .btn-outline-primary {
+    background-color: #FF0488 !important;
+    border-color: #FF0488 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(255,4,136,0.10);
+}
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: url('/static/accounts/loginbg.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+}
+
+.login-card {
+    background: transparent;
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-title {
+    color: #212529;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.form-label {
+    color: #212529;
+    font-weight: 500;
+}
+
+.btn-pink {
+    background: #ff0080;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+.btn-pink:hover {
+    background: #e60073;
+}
+
+form.bg-white {
+    border-radius: 16px;
+    
+}
+
+input.form-control {
+    border-radius: 10px;
+    font-size: 1.1rem;
+    background: #fff;
+    border: 1px solid #ced4da;
+    color: #212529;
+}
+
+input.form-control::placeholder {
+    color: #6c757d;
+}
+
+input.form-control:focus {
+    background: #fff;
+    border-color: #ff0080;
+    color: #212529;
+    box-shadow: 0 0 0 0.25rem rgba(255, 0, 128, 0.25);
+}
+   
+
+label.form-label {
+    font-size: 1.1rem;
+}
+
+/* Styles for login.html extracted from inline styles */
+.login-container {
+    max-width: 500px;
+}
+.login-title {
+    font-size: 2.5rem;
+}
+.btn-login-pink {
+    background: #ff0080;
+    color: white;
+    font-size: 1.3rem;
+}
+.btn-login-pink:hover, .btn-login-pink:focus {
+    background: #e60073;
+    color: #fff;
+}
+.btn-group .btn-outline-primary.admin-radius {
+    border-radius: 1rem 0 0 1rem;
+}
+.btn-group .btn-outline-primary.student-radius {
+    border-radius: 0 1rem 1rem 0;
+}
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    /* visible border for login card */
+    border: 2px solid #FF0488;
+    box-shadow: 0 6px 18px rgba(255,4,136,0.08);
+}
+
+.login-form {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .login-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .login-title {
+        font-size: 2rem;
+    }
+}

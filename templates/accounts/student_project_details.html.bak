@@ -1,0 +1,459 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/projects.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/project-cards.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/project-details.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+<div class="sidebar-overlay sidebar-overlay-custom" id="sidebarOverlay"></div>
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+    <button class="close-btn d-lg-none close-btn-custom" id="closeSidebarBtn" aria-label="Close sidebar">
+            &times;
+        </button>
+    </div>
+    <nav class="nav flex-column">
+                <a class="nav-link active" href="#">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-middle">
+                            <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6676C9.93001 16.5 9.33413 17.1703 9.33413 18V21V22.125C9.33413 23.1609 8.58823 24 7.66732 24H6.66723H5.33795C5.27545 24 5.21294 23.9953 5.15044 23.9906C5.10043 23.9953 5.05043 24 5.00043 24H4.3337C3.41279 24 2.66689 23.1609 2.66689 22.125V16.875C2.66689 16.8328 2.66689 16.7859 2.67106 16.7438V13.4813H1.33345C0.583383 13.4813 0 12.825 0 11.9766C0 11.5547 0.125011 11.1797 0.416702 10.8516L11.1009 0.375C11.3926 0.046875 11.726 0 12.0177 0C12.3094 0 12.6427 0.09375 12.8928 0.328125L23.5353 10.8516C23.8687 11.1797 24.0354 11.5547 23.9937 11.9766Z" fill="black"/>
+                        </svg>
+                        <span class="overview-label">Overview</span>
+                </a>
+                <a class="nav-link" href="{% url 'admin_projects' %}">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-middle">
+                            <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="white"/>
+                        </svg>
+                        <span class="projects-label">Projects</span>
+                </a>
+                <a class="nav-link" href="{% url 'admin_profiles' %}">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-middle">
+                            <path d="M3 24H21C22.6547 24 24 22.4625 24 20.5714V6.85714C24 4.96607 22.6547 3.42857 21 3.42857H13.5C13.0266 3.42857 12.5812 3.17679 12.3 2.74286L11.4 1.37143C10.8328 0.508928 9.94219 0 9 0H3C1.34531 0 0 1.5375 0 3.42857V20.5714C0 22.4625 1.34531 24 3 24Z" fill="#374151"/>
+                        </svg>
+                        <span class="profile-label">Profile</span>
+                </a>
+        <a class="nav-link" href="#" id="addStudentBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm4.216 1.447A2.5 2.5 0 0 1 15 10.5V12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 1 2.784-2.553A4.992 4.992 0 0 1 8 9c1.306 0 2.417-.417 3.216-1.553zM8 10a3.978 3.978 0 0 0-3.468 2H13.468A3.978 3.978 0 0 0 8 10z"/></svg>
+            Add Students
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form-custom">
+        {% csrf_token %}
+    <button type="submit" class="btn btn-danger w-100 btn-logout-custom">Logout</button>
+    </form>
+</div>
+
+<div class="container mt-4">
+    {% if is_admin %}
+    <div class="admin-view">
+        <h2 class="mb-4">{{ student.student_name }}'s Projects</h2>
+        <div class="row">
+        {% for project in projects %}
+            <div class="project-card">
+                <div class="project-screenshot-container">
+                    {% if project.screenshot %}
+                        <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" class="project-screenshot">
+                    {% else %}
+                        <div class="no-screenshot">No Screenshot</div>
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <p class="project-description mb-4">{{ project.description|truncatechars:120 }}</p>
+                    
+                    <div class="project-meta mb-3">
+                        <div class="project-stats">
+                            <span><i class="fas fa-eye me-1"></i> {{ project.view_count }}</span>
+                            <span><i class="fas fa-heart me-1"></i> {{ project.like_count }}</span>
+                            <span><i class="fas fa-clock me-1"></i> {{ project.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <div class="project-links">
+                            {% if project.project_link %}
+                            <a href="{{ project.project_link }}" target="_blank" class="btn-view">
+                                <i class="fas fa-code"></i> Code
+                            </a>
+                            {% endif %}
+                            {% if project.output_link %}
+                            <a href="{{ project.output_link }}" target="_blank" class="btn-view">
+                                <i class="fas fa-external-link-alt"></i> Demo
+                            </a>
+                            {% endif %}
+                        </div>
+                        <a href="#" class="btn-hire">
+                            <i class="fas fa-user-plus"></i>Hire Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center p-5">
+                <div class="text-muted">
+                    <i class="fas fa-folder-open mb-3" style="font-size: 3rem;"></i>
+                    <h4>No Projects Yet</h4>
+                    <p>This student hasn't uploaded any projects yet.</p>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="project-details-container">
+        <div class="project-details-wrapper">
+            <!-- Left Card - Project Preview -->
+            <div class="project-preview-card">
+                <div class="project-screenshot-wrapper">
+                    {% if project.screenshot %}
+                        <img src="{{ project.screenshot.url }}" class="project-screenshot" alt="{{ project.title }}">
+                    {% else %}
+                        <div class="no-screenshot">
+                            <i class="fas fa-code fa-2x mb-2"></i>
+                            <span>No Preview Available</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="project-preview-content">
+                    <div class="project-preview-header">
+                        <h1 class="project-title">{{ project.title }}</h1>
+                        <div class="project-author">
+                            <i class="fas fa-user"></i>
+                            <span>{{ project.student.student_name }}</span>
+                        </div>
+                    </div>
+                    <div class="project-quick-stats">
+                        <div class="quick-stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span>{{ project.view_count }} views</span>
+                        </div>
+                        <div class="quick-stat-item">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ project.like_count }} likes</span>
+                        </div>
+                        <div class="quick-stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ project.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    {% if request.user != project.student.user %}
+                    <button class="follow-btn {% if is_following %}btn-following{% else %}btn-follow{% endif %} w-100" 
+                            data-student-id="{{ project.student.id }}" 
+                            data-following="{{ is_following|yesno:'true,false' }}">
+                        <span class="follow-text">{% if is_following %}Following{% else %}Follow{% endif %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Card - Project Details -->
+            <div class="project-details-card">
+                <div class="project-content-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        About This Project
+                    </h2>
+                    <div class="project-description">
+                        <p>{{ project.description }}</p>
+                    </div>
+                                    <span class="meta-divider">•</span>
+                                    <span class="project-time">{{ project.created_at|timesince }} ago</span>
+                                </div>
+                            </div>
+                            <div class="project-actions-top d-flex gap-3 align-items-center">
+                                {% if project.student.user != request.user %}
+                                <button class="like-btn" data-project-id="{{ project.id }}" data-liked="{{ project.is_liked_by|yesno:'true,false' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill {% if project.is_liked_by %}text-danger{% endif %}" viewBox="0 0 16 16">
+                                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                    </svg>
+                                    <span class="like-count">{{ project.like_count }}</span>
+                                </button>
+
+                                <button class="btn follow-btn {% if is_following %}btn-following{% else %}btn-follow{% endif %}" 
+                                        data-student-id="{{ project.student.id }}" 
+                                        data-following="{{ is_following|yesno:'true,false' }}">
+                                    <span class="follow-text">{% if is_following %}Following{% else %}Follow{% endif %}</span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </header>
+
+                    {% if project.screenshot %}
+                    <div class="project-screenshot-container">
+                        <img src="{{ project.screenshot.url }}" class="project-screenshot" alt="Project Screenshot">
+                    </div>
+                    {% endif %}
+
+                    <div class="project-info-grid">
+                        <div class="project-description">
+                            <h5>About This Project</h5>
+                            <p>{{ project.description }}</p>
+                        </div>
+
+                        <div class="project-meta">
+                            {% if project.category %}
+                            <div class="meta-section">
+                                <h6>Category</h6>
+                                <span class="badge category-badge">{{ project.category }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if project.tags %}
+                            <div class="meta-section">
+                                <h6>Technologies</h6>
+                                <div class="tags-container">
+                                    {% for tag in project.tags.split %}
+                                    <span class="badge tag-badge">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="project-stats">
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                                <span>{{ project.view_count }} views</span>
+                            </div>
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                </svg>
+                                <span class="total-likes">{{ project.like_count }} likes</span>
+                            </div>
+                        </div>
+
+                        <div class="project-actions">
+                            <div class="action-buttons">
+                                {% if project.project_link %}
+                                <a href="{{ project.project_link }}" target="_blank" class="btn btn-code" {% if project.student.user != request.user %}onclick="recordProjectView({{ project.id }}, event); return true;"{% endif %}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+                                        <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
+                                    </svg>
+                                    View Code
+                                </a>
+                                {% endif %}
+                                {% if project.output_link %}
+                                <a href="{{ project.output_link }}" target="_blank" class="btn btn-demo" {% if project.student.user != request.user %}onclick="recordProjectView({{ project.id }}, event); return true;"{% endif %}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                    </svg>
+                                    View Live Demo
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle project likes
+    document.querySelector('.like-btn')?.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const projectId = this.dataset.projectId;
+        
+        try {
+            const response = await fetch(`/accounts/project/${projectId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                const heartIcon = this.querySelector('.bi-heart-fill');
+                const likeCount = this.querySelector('.like-count');
+                const totalLikes = document.querySelector('.total-likes');
+                
+                if (data.liked) {
+                    heartIcon.classList.add('text-danger');
+                } else {
+                    heartIcon.classList.remove('text-danger');
+                }
+                
+                likeCount.textContent = data.likeCount;
+                totalLikes.textContent = data.likeCount;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Handle follow/unfollow
+    document.querySelector('.follow-btn')?.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const studentId = this.dataset.studentId;
+        const followText = this.querySelector('.follow-text');
+        
+        try {
+            const response = await fetch(`/accounts/student/${studentId}/follow/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                const isFollowing = data.following;
+                followText.textContent = isFollowing ? 'Following' : 'Follow';
+                this.classList.toggle('btn-secondary', isFollowing);
+                this.classList.toggle('btn-outline-primary', !isFollowing);
+                this.dataset.following = isFollowing;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+// Sidebar functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const openSidebarBtn = document.getElementById('openSidebarBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const adminSidebar = document.getElementById('adminSidebar');
+
+    function openSidebar() {
+        adminSidebar.classList.add('show');
+        sidebarOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        adminSidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    openSidebarBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+
+<script>
+function recordProjectView(projectId, event) {
+    console.log('=== View Recording Started ===');
+    console.log('Project ID:', projectId);
+    console.log('Event type:', event.type);
+    
+    try {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        console.log('CSRF token found:', !!csrftoken);
+        
+        // Find the stat-item for views
+        let projectCard = event.target.closest('.project-details-card');
+        if (!projectCard && event.target.classList.contains('project-details-card')) {
+            projectCard = event.target;
+        }
+        console.log('Project card found:', !!projectCard);
+        
+        let viewCountElement = null;
+        if (projectCard) {
+            const statItems = projectCard.querySelectorAll('.stat-item span');
+            console.log('Found stat items:', statItems.length);
+            if (statItems.length > 0) {
+                viewCountElement = statItems[0];
+                console.log('Current view count:', viewCountElement.textContent);
+            }
+        }
+        console.log('View count element found:', !!viewCountElement);
+        
+        const formData = new FormData();
+        formData.append('project_id', projectId);
+        
+        console.log('Sending POST request...');
+        fetch('/accounts/record-project-view/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            if (data.success && data.newCount !== undefined) {
+                console.log('Updating view count to:', data.newCount);
+                if (viewCountElement) {
+                    viewCountElement.textContent = data.newCount + ' views';
+                    console.log('View count updated successfully');
+                }
+            } else {
+                console.error('Invalid response data:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+    } catch (error) {
+        console.error('Error in recordProjectView:', error);
+    }
+    console.log('=== View Recording Completed ===');
+}
+</script>
+{% endblock %}

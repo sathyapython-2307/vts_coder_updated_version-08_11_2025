@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: vetricoders-django
+    env: python
+  # Install dependencies, run migrations and collect static files during build
+  buildCommand: "pip install -r requirements.txt; python manage.py migrate --noinput; python manage.py collectstatic --noinput"
+  # Start the Gunicorn WSGI server
+  startCommand: "gunicorn core.wsgi:application --bind 0.0.0.0:8000"
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        value: "your-secret-key"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vetricoders-db
+      - key: DEBUG
+        value: "False"
+databases:
+  - name: vetricoders-db
+    databaseName: vetricoders
+    user: vetricoders_user
+
+staticDirs:
+  - path: /static
+    dir: staticfiles
+  - path: /media
+    dir: media

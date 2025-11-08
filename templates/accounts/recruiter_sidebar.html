@@ -1,0 +1,43 @@
+<!-- Mobile Toggle Button -->
+<button class="btn btn-pink mobile-toggle d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#recruiterSidebar">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<div class="recruiter-sidebar" id="recruiterSidebar">
+    <div class="p-3 text-center">
+        {% if recruiter.company_logo %}
+            <img src="{{ recruiter.company_logo.url }}" alt="Company Logo" class="img-fluid mb-3" style="max-height: 80px;">
+        {% endif %}
+        <h5 class="mb-0">{{ company_name }}</h5>
+        <small>{{ contact_person }}</small>
+    </div>
+    <hr class="mx-3 bg-white">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'dashboard' %}active{% endif %}" href="{% url 'recruiter_home' %}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'talent' %}active{% endif %}" href="{% url 'browse_talent' %}">
+                <i class="fas fa-users"></i> Browse Talent
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'projects' %}active{% endif %}" href="{% url 'recruiter_student_projects' %}">
+                <i class="fas fa-code"></i> Student Projects
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_tab == 'saved' %}active{% endif %}" href="{% url 'saved_profiles' %}">
+                <i class="fas fa-bookmark"></i> Saved Profiles
+            </a>
+        </li>
+    </ul>
+    <div class="mt-auto p-3">
+        <a href="{% url 'logout' %}" class="btn btn-light w-100">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>

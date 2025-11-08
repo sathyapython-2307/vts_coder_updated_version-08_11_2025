@@ -1,0 +1,767 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extrastyles %}
+<style>
+    /* Scoped visual polish for student_home only */
+    .admin-main-content h2 {
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+    }
+    .dashboard-row-centered { display:flex; justify-content:center; }
+    .dashboard-center-group { 
+        display: flex; 
+        gap: 1rem; 
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    .btn-search-dev, .btn-share-work { 
+        border-radius: 10px; 
+        padding: 0.6rem 1rem; 
+        box-shadow: 0 8px 28px rgba(15,23,42,0.06);
+        white-space: nowrap;
+    }
+    .btn-search-dev { 
+        background: linear-gradient(90deg,#4ade80,#10b981); 
+        color: #fff; 
+        border: none; 
+    }
+    .btn-share-work { 
+        background: #fff; 
+        border: 1px solid rgba(15,23,42,0.06);
+    }
+    .dashboard-profile-box { 
+        width: 48px; 
+        height: 48px; 
+        border-radius: 50%; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        background: linear-gradient(180deg,#ffffff,#f7f9ff); 
+        
+        margin-left: 3rem;  /* Increased from 1rem to 2rem */
+    }
+    .img-student-profile {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .profile-link {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+    @media (max-width: 768px) {
+        .dashboard-center-group {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .dashboard-center-group .d-flex {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .btn-search-dev, .btn-share-work {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .dashboard-profile-box {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+        .d-flex.align-items-center {
+            flex-direction: column;
+            width: 100%;
+        }
+        .profile-link {
+            margin-left: 0 !important;
+            margin-top: 1rem;
+        }
+    }
+    .img-student-profile { width:68px; height:68px; object-fit:cover; }
+    .recent-uploads-title { font-weight:700; color:#0f172a; margin-bottom:0.75rem; }
+    .recent-upload-card { border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 8px 26px rgba(2,6,23,0.04); border:1px solid rgba(2,6,23,0.04); }
+    .recent-upload-title { font-weight:700; color:#111827; }
+    .meta-pill-inline { display:inline-block; padding:0.25rem 0.6rem; background:rgba(15,23,42,0.04); border-radius:999px; font-weight:600; }
+    @media (max-width:576px){ .dashboard-center-group{gap:.5rem} .dashboard-profile-box{width:64px;height:64px} .img-student-profile{width:56px;height:56px} }
+
+    /* Mobile responsiveness */
+    @media (max-width: 767.98px) {
+        .dashboard-profile-box {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 1rem auto !important;
+        }
+        .img-student-profile {
+            display: block !important;
+            margin: 0 auto !important;
+        }
+        .btn-search-dev, .btn-share-work {
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 0.5rem auto !important;
+        }
+        .dashboard-center-group {
+            padding: 0 0.5rem;
+        }
+        .d-flex.flex-column.flex-md-row {
+            gap: 1rem !important;
+        }
+    }
+    /* Override base purple icon color on this page */
+    .notification-btn svg, .admin-sidebar .logo-row span { color: #374151 !important; }
+    /* Page-scoped layout fixes: ensure main content sits to the right of the fixed sidebar */
+    /* The app's sidebar width is 260px; add extra gap so content does not touch the sidebar */
+    .admin-main-content {
+        margin-left: 320px !important; /* 60px extra gap from sidebar */
+        padding-left: 2.25rem !important;
+    }
+
+    /* Notification bell container adjustments specific to this page */
+    .notification-container {
+        top: 1.5rem;
+        right: 1.5rem;
+        left: auto;
+        z-index: 1200;
+    }
+
+    /* Make bell position responsive so it doesn't overlap the sidebar on small screens */
+    @media (max-width: 1199.98px) {
+        .admin-main-content { margin-left: 300px !important; }
+        .notification-container { right: 1rem; top: 1.25rem; left: auto; }
+    }
+    /* Keep the notification fixed to the right on wide screens as well */
+    @media (max-width: 991.98px) {
+        /* On small screens the sidebar is off-canvas; allow main content to use full width */
+        .admin-main-content { margin-left: 0 !important; padding-left: 1rem !important; }
+        .notification-container { right: 0.75rem; top: 0.75rem; }
+    }
+
+    /* --- Mobile centering for Recent Uploads --- */
+    @media (max-width: 767.98px) {
+        .recent-uploads-section {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            max-width: 98vw !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            box-sizing: border-box;
+        }
+        .recent-uploads-container {
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: center !important;
+        }
+        .recent-uploads-title {
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .recent-uploads-row {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 1rem !important;
+        }
+        .recent-upload-card {
+            width: 100% !important;
+            max-width: 350px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/student_home.css' %}">
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+    <button class="close-btn d-lg-none" id="closeSidebarBtn" aria-label="Close sidebar">
+            &times;
+        </button>
+    </div>
+    <nav class="nav flex-column">
+                <a class="nav-link active" href="#">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                            <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6676C9.93001 16.5 9.33413 17.1703 9.33413 18V21V22.125C9.33413 23.1609 8.58823 24 7.66732 24H6.66723H5.33795C5.27545 24 5.21294 23.9953 5.15044 23.9906C5.10043 23.9953 5.05043 24 5.00043 24H4.3337C3.41279 24 2.66689 23.1609 2.66689 22.125V16.875C2.66689 16.8328 2.66689 16.7859 2.67106 16.7438V13.4813H1.33345C0.583383 13.4813 0 12.825 0 11.9766C0 11.5547 0.125011 11.1797 0.416702 10.8516L11.1009 0.375C11.3926 0.046875 11.726 0 12.0177 0C12.3094 0 12.6427 0.09375 12.8928 0.328125L23.5353 10.8516C23.8687 11.1797 24.0354 11.5547 23.9937 11.9766Z" fill="black"/>
+                        </svg>
+                        <span class="overview-label">Overview</span>
+                </a>
+                <a class="nav-link" href="{% url 'student_projects' %}">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                            <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="white"/>
+                        </svg>
+                        <span class="projects-label">Projects</span>
+                </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+    <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+    <div class="admin-main-content fade-in-up">
+        <h2>Welcome, {{ user.username }}!</h2>
+    <div class="dashboard-row-centered">
+        <div class="dashboard-center-group">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <a href="{% url 'public_student_projects' %}" class="btn btn-search-dev d-inline-flex align-items-center justify-content-center flex-nowrap dashboard-btn slide-in-left w-100 w-md-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 flex-shrink-0" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span style="font-weight:bold; font-size: 14px;">Search the developers</span>
+                </a>
+                <button class="btn btn-share-work d-inline-flex align-items-center justify-content-center dashboard-btn slide-in-right fs-6 px-2 w-100 w-md-auto">
+                    <span>Share Your Work</span>
+                </button>
+                <a href="{% url 'student_profile' user.student_profile.id %}" class="profile-link">
+                    <div class="dashboard-profile-box">
+                        {% if user.student_profile.image %}
+                        <img src="{{ user.student_profile.image.url }}" alt="Student Image" class="img-student-profile">
+                        {% else %}
+                        <img src="{% static 'accounts/default_profile.png' %}" alt="Student Image" class="img-student-profile">
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<!-- Share Your Work Form: always visible, centered, and placed below dashboard group -->
+<div class="share-work-form-container">
+    <div class="share-modal-content">
+        <div class="share-modal-header d-flex justify-content-between align-items-center">
+            <h5 class="modal-title">Project Details</h5>
+        </div>
+        <div class="share-modal-body">
+            <form id="shareWorkForm" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Link</label>
+                    <input type="url" class="form-control" name="project_link" placeholder="Attach the Project Link">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Output Link</label>
+                    <input type="url" class="form-control" name="output_link" placeholder="Attach the Output Link">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Screenshot</label>
+                    <input type="file" class="form-control" id="screenshot" name="screenshot" accept="image/*">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-2 mb-md-0">
+                        <label class="form-label fw-bold">Project Title</label>
+                        <input type="text" class="form-control" name="title" placeholder="Enter project title" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Category</label>
+                        <input type="text" class="form-control" name="category" placeholder="Type category" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Description</label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Describe your project, inspiration, and development process..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tags</label>
+                    <input type="text" class="form-control" name="tags" placeholder="Add tags, separated by commas">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Visibility</label>
+                        <select class="form-select" name="visibility">
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4 button-container">
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-pink fw-bold">Publish Project</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    </div>
+            </div>
+        </div>
+
+<!-- Share Your Work Modal -->
+<div class="modal fade" id="shareWorkModal" tabindex="-1" aria-labelledby="shareWorkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content share-modal-content">
+            <div class="modal-header share-modal-header">
+                <h5 class="modal-title" id="shareWorkModalLabel">Project Details</h5>
+                <button type="button" class="btn-close" id="closeShareWorkModalBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body share-modal-body">
+                <form id="shareWorkForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Project Link</label>
+                        <input type="url" class="form-control" name="project_link" placeholder="Attach the Project Link">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Project Output Link</label>
+                        <input type="url" class="form-control" name="output_link" placeholder="Attach the Output Link">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2 mb-md-0">
+                            <label class="form-label fw-bold">Project Title</label>
+                            <input type="text" class="form-control" name="title" placeholder="Enter project title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Category</label>
+                            <input type="text" class="form-control" name="category" placeholder="Type category" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description</label>
+                        <textarea class="form-control" name="description" rows="4" placeholder="Describe your project, inspiration, and development process..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tags</label>
+                        <input type="text" class="form-control" name="tags" placeholder="Add tags, separated by commas">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2 mb-md-0">
+                            <label class="form-label fw-bold">Visibility</label>
+                            <select class="form-select" name="visibility">
+                                <option value="Public">Public</option>
+                                <option value="Private">Private</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="allow_downloads" id="allowDownloads">
+                                <label class="form-check-label" for="allowDownloads">Enable downloads</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button type="button" class="btn btn-secondary" id="closeShareWorkModalBtn2">Cancel</button>
+                        <button type="submit" class="btn btn-pink fw-bold">Publish Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal open/close logic
+const openShareWorkModalBtn = document.getElementById('openShareWorkModalBtn');
+const shareWorkModal = document.getElementById('shareWorkModal');
+const closeShareWorkModalBtn = document.getElementById('closeShareWorkModalBtn');
+const closeShareWorkModalBtn2 = document.getElementById('closeShareWorkModalBtn2');
+function openShareModal() {
+    shareWorkModal.classList.add('show');
+    shareWorkModal.style.display = 'block';
+    document.body.classList.add('modal-open');
+}
+function closeShareModal() {
+    shareWorkModal.classList.remove('show');
+    shareWorkModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+}
+if (openShareWorkModalBtn) openShareWorkModalBtn.onclick = openShareModal;
+if (closeShareWorkModalBtn) closeShareWorkModalBtn.onclick = closeShareModal;
+if (closeShareWorkModalBtn2) closeShareWorkModalBtn2.onclick = closeShareModal;
+// Form logic with AJAX submission
+document.getElementById('shareWorkForm').onsubmit = function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeShareModal();
+            alert('Project submitted successfully!');
+            // Redirect to projects page
+            window.location.href = "{% url 'student_projects' %}";
+        } else {
+            alert('Error submitting project. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting project. Please try again.');
+    });
+};
+</script>
+            <!-- Removed duplicate profile image -->
+        </div>
+</div>
+
+<script>
+// Drag and drop logic
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('projectFiles');
+const fileList = document.getElementById('fileList');
+if (dropArea && fileInput) {
+    dropArea.addEventListener('click', function(e) {
+        if (e.target === dropArea) fileInput.click();
+    });
+    dropArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+    });
+    dropArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+    });
+    dropArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        showFileList();
+    });
+    fileInput.addEventListener('change', showFileList);
+}
+function showFileList() {
+    if (!fileList || !fileInput.files.length) {
+        fileList.innerHTML = '';
+        return;
+    }
+    let html = '<div>Selected files:</div><ul style="margin:0 0 0 10px;padding:0;">';
+    for (let i = 0; i < fileInput.files.length; i++) {
+        html += `<li>${fileInput.files[i].name}</li>`;
+    }
+    html += '</ul>';
+    fileList.innerHTML = html;
+}
+// Prevent default drag behaviors on window
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    window.addEventListener(eventName, e => e.preventDefault());
+});
+
+// Form validation and responsive handling
+const shareWorkForm = document.getElementById('shareWorkForm');
+if (shareWorkForm) {
+    shareWorkForm.addEventListener('submit', function(event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+}
+
+// Responsive input handling
+const resizeTextArea = function(el) {
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight) + 'px';
+};
+
+document.querySelectorAll('textarea').forEach(textarea => {
+    textarea.addEventListener('input', function() {
+        resizeTextArea(this);
+    });
+    // Initial resize
+    resizeTextArea(textarea);
+});
+
+// Responsive form layout adjustments
+const adjustFormLayout = () => {
+    const formContainer = document.querySelector('.share-work-form-container');
+    if (formContainer) {
+        if (window.innerWidth < 768) {
+            formContainer.style.padding = '0.5rem';
+        } else {
+            formContainer.style.padding = '1rem';
+        }
+    }
+};
+
+// Run on load and resize
+window.addEventListener('load', adjustFormLayout);
+window.addEventListener('resize', adjustFormLayout);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+
+<!-- Recent Uploads Section -->
+<div class="admin-main-content recent-uploads-section">
+    <div class="recent-uploads-container">
+        <h3 class="recent-uploads-title">Recent Uploads</h3>
+        <div class="recent-uploads-row">
+            {% for project in user_projects %}
+            <div class="recent-upload-card fade-in-up">
+                <div class="recent-upload-image">
+                    {% if project.screenshot %}
+                    <img src="{{ project.screenshot.url }}" alt="Screenshot">
+                    {% else %}
+                    <div class="recent-upload-no-image">No Screenshot</div>
+                    {% endif %}
+                </div>
+                <div class="recent-upload-info">
+                    <h5 class="recent-upload-title">{{ project.title }}</h5>
+                    <div class="recent-upload-time">{{ project.time_ago }}</div>
+                    {% if project.status == 'Published' %}
+                    <span class="recent-upload-status published">Published</span>
+                    {% elif project.status == 'Draft' %}
+                    <span class="recent-upload-status draft">Draft</span>
+                    {% endif %}
+                    <div class="recent-upload-actions">
+                        {% if project.project_link %}
+                        <a href="{{ project.project_link }}" target="_blank" class="recent-upload-action view" title="View Code">
+                            <svg width="22" height="22" fill="none" stroke="#ff0080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+                        </a>
+                        {% endif %}
+                        <button class="recent-upload-action edit" title="Edit" data-project-id="{{ project.id }}" onclick="openEditModal({{ project.id }})">
+                            <svg width="22" height="22" fill="none" stroke="#ff9800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                        </button>
+                        <button class="recent-upload-action delete" title="Delete" data-project-id="{{ project.id }}" onclick="removeFromRecent({{ project.id }})">
+                            <svg width="22" height="22" fill="none" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Edit Project Modal -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProjectForm" enctype="multipart/form-data">
+                    <input type="hidden" id="editProjectId" name="project_id">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editTitle" class="form-label">Project Title</label>
+                                <input type="text" class="form-control" id="editTitle" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editCategory" class="form-label">Category</label>
+                                <select class="form-control" id="editCategory" name="category" required>
+                                    <option value="Web Development">Web Development</option>
+                                    <option value="Mobile App">Mobile App</option>
+                                    <option value="Desktop App">Desktop App</option>
+                                    <option value="Game Development">Game Development</option>
+                                    <option value="Data Science">Data Science</option>
+                                    <option value="Machine Learning">Machine Learning</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editTags" class="form-label">Tags (comma-separated)</label>
+                                <input type="text" class="form-control" id="editTags" name="tags" placeholder="React, JavaScript, CSS">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editVisibility" class="form-label">Visibility</label>
+                                <select class="form-control" id="editVisibility" name="visibility" required>
+                                    <option value="Public">Public</option>
+                                    <option value="Private">Private</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editOutputLink" class="form-label">Output Link (Live Demo)</label>
+                                <input type="url" class="form-control" id="editOutputLink" name="output_link" placeholder="https://your-project.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editProjectLink" class="form-label">Project Link (Source Code)</label>
+                                <input type="url" class="form-control" id="editProjectLink" name="project_link" placeholder="https://github.com/your-repo">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editScreenshot" class="form-label">Screenshot</label>
+                                <input type="file" class="form-control" id="editScreenshot" name="screenshot" accept="image/*">
+                                <div class="form-text">Leave empty to keep current screenshot</div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="editAllowDownloads" name="allow_downloads">
+                                <label class="form-check-label" for="editAllowDownloads">
+                                    Allow Downloads
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="editProjectError" class="alert alert-danger d-none"></div>
+                    <div id="editProjectSuccess" class="alert alert-success d-none"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateProject()">Update Project</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variable to store current project data
+let currentProjectData = {};
+
+// Open edit modal and load project data
+async function openEditModal(projectId) {
+    try {
+        const response = await fetch(`/accounts/project/${projectId}/edit/`, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentProjectData = data.project;
+            
+            // Populate form fields
+            document.getElementById('editProjectId').value = data.project.id;
+            document.getElementById('editTitle').value = data.project.title;
+            document.getElementById('editDescription').value = data.project.description;
+            document.getElementById('editCategory').value = data.project.category;
+            document.getElementById('editTags').value = data.project.tags;
+            document.getElementById('editVisibility').value = data.project.visibility;
+            document.getElementById('editOutputLink').value = data.project.output_link;
+            document.getElementById('editProjectLink').value = data.project.project_link;
+            document.getElementById('editAllowDownloads').checked = data.project.allow_downloads;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('editProjectModal'));
+            modal.show();
+        } else {
+            alert('Error loading project data');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error loading project data');
+    }
+}
+
+// Update project
+async function updateProject() {
+    const form = document.getElementById('editProjectForm');
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch(`/accounts/project/${currentProjectData.id}/edit/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Hide error messages
+            document.getElementById('editProjectError').classList.add('d-none');
+            document.getElementById('editProjectSuccess').classList.remove('d-none');
+            document.getElementById('editProjectSuccess').textContent = data.message;
+            
+            // Close modal after 1.5 seconds
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editProjectModal'));
+                modal.hide();
+                location.reload(); // Refresh to show updated data
+            }, 1500);
+        } else {
+            document.getElementById('editProjectError').textContent = data.message || 'Error updating project';
+            document.getElementById('editProjectError').classList.remove('d-none');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('editProjectError').textContent = 'Error updating project';
+        document.getElementById('editProjectError').classList.remove('d-none');
+    }
+}
+
+// Remove from Recent Uploads
+async function removeFromRecent(projectId) {
+    if (!confirm('Are you sure you want to remove this project from Recent Uploads?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/accounts/project/${projectId}/remove-from-recent/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Remove the card from the DOM
+            const projectCard = document.querySelector(`[data-project-id="${projectId}"]`).closest('.recent-upload-card');
+            if (projectCard) {
+                projectCard.remove();
+            }
+        } else {
+            alert('Error removing project from Recent Uploads');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error removing project from Recent Uploads');
+    }
+}
+</script>
+{% endblock %}
+

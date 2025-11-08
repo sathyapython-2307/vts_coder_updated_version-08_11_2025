@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/projects.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/project-cards.css' %}">
+
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+        <button class="close-btn d-lg-none" id="closeSidebarBtn" aria-label="Close sidebar">
+            &times;
+        </button>
+    </div>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="{% url 'student_home' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6676C9.93001 16.5 9.33413 17.1703 9.33413 18V21V22.125C9.33413 23.1609 8.58823 24 7.66732 24H6.66723H5.33795C5.27545 24 5.21294 23.9953 5.15044 23.9906C5.10043 23.9953 5.05043 24 5.00043 24H4.3337C3.41279 24 2.66689 23.1609 2.66689 22.125V16.875C2.66689 16.8328 2.66689 16.7859 2.67106 16.7438V13.4813H1.33345C0.583383 13.4813 0 12.825 0 11.9766C0 11.5547 0.125011 11.1797 0.416702 10.8516L11.1009 0.375C11.3926 0.046875 11.726 0 12.0177 0C12.3094 0 12.6427 0.09375 12.8928 0.328125L23.5353 10.8516C23.8687 11.1797 24.0354 11.5547 23.9937 11.9766Z" fill="white"/>
+            </svg>
+            <span class="overview-label">Overview</span>
+        </a>
+        <a class="nav-link active" href="{% url 'student_projects' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="black"/>
+            </svg>
+            <span class="projects-label">Projects</span>
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+
+<div class="admin-main-content">
+    <h2>My Projects</h2>
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="project-card">
+                <div class="project-screenshot-container">
+                    {% if project.screenshot %}
+                    <a href="{{ project.output_link }}" target="_blank" class="screenshot-link">
+                        <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" class="project-screenshot">
+                    </a>
+                    {% else %}
+                    <div class="no-screenshot">No Screenshot</div>
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="card-title">{{ project.title }}</h3>
+                    <div class="project-meta">
+                        {% if project.category %}
+                        <span class="category">{{ project.category }}</span>
+                        {% endif %}
+                        <span class="date">{{ project.created_at|timesince }} ago</span>
+                    </div>
+                    <p class="description">{{ project.description|truncatewords:30 }}</p>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <span>{{ project.view_count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span>{{ project.like_count }}</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            {% if project.project_link %}
+                            <a href="{{ project.project_link }}" target="_blank" class="btn btn-view btn-outline-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+                                    <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
+                                </svg>
+                                Code
+                            </a>
+                            {% endif %}
+                            {% if project.output_link %}
+                            <a href="{{ project.output_link }}" target="_blank" class="btn btn-view btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                                Live
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if record_view_ids %}
+{{ record_view_ids|json_script:"project-ids" }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var projectIds = JSON.parse(document.getElementById('project-ids').textContent);
+        projectIds.forEach(function(pid) {
+            fetch('/accounts/record-project-view/', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: 'project_id=' + pid
+            });
+        });
+    });
+</script>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const openSidebarBtn = document.getElementById('openSidebarBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const adminSidebar = document.getElementById('adminSidebar');
+
+        function openSidebar() {
+            adminSidebar.classList.add('show');
+            sidebarOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            adminSidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        openSidebarBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    });
+</script>
+{% endblock %}
+        <a class="nav-link active" href="{% url 'student_projects' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="black"/>
+            </svg>
+            <span class="projects-label">Projects</span>
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+<div class="admin-main-content">
+    <h2>My Projects</h2>
+    <div class="row g-4 mt-3">
+    
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="project-card">
+                <div class="project-screenshot-container">
+                    {% if project.screenshot %}
+                    <a href="{{ project.output_link }}" target="_blank" class="screenshot-link">
+                        <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" class="project-screenshot">
+                    </a>
+                    {% else %}
+                    <div class="no-screenshot">No Screenshot</div>
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="card-title">{{ project.title }}</h3>
+                    <div class="project-meta">
+                        {% if project.category %}
+                        <span class="category">{{ project.category }}</span>
+                        {% endif %}
+                        <span class="date">{{ project.created_at|timesince }} ago</span>
+                    </div>
+                    <p class="description">{{ project.description|truncatewords:30 }}</p>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <span>{{ project.view_count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span>{{ project.like_count }}</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            {% if project.project_link %}
+                            <a href="{{ project.project_link }}" target="_blank" class="btn btn-view btn-outline-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+                                    <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
+                                </svg>
+                                Code
+                            </a>
+                            {% endif %}
+                            {% if project.output_link %}
+                            <a href="{{ project.output_link }}" target="_blank" class="btn btn-view btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                                Live
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                        {% if project.output_link %}
+                        <a href="{{ project.output_link }}" target="_blank" class="btn btn-outline-success btn-sm">View Live</a>
+                        {% endif %}
+                        <button class="btn btn-link text-muted like-btn" data-project-id="{{ project.id }}" data-liked="{{ project.is_liked_by|yesno:'true,false' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-heart-fill {% if project.is_liked_by %}text-danger{% endif %}" viewBox="0 0 16 16">
+                                <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                            </svg>
+                            <span class="like-count">{{ project.like_count }}</span>
+                        </button>
+                        <span class="ms-2 text-muted">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" style="vertical-align:middle;">
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zm-8 4.5c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6zm0-10a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                            </svg>
+                            {{ project.view_count }}
+                        </span>
+                        {% if project.student.user == request.user %}
+                        <button class="btn btn-link text-danger delete-btn" data-project-id="{{ project.id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+
+    // Handle project likes
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const projectId = this.dataset.projectId;
+            
+            try {
+                const response = await fetch(`/accounts/project/${projectId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const heartIcon = this.querySelector('.bi-heart-fill');
+                    const likeCount = this.querySelector('.like-count');
+                    
+                    if (data.liked) {
+                        heartIcon.classList.add('text-danger');
+                    } else {
+                        heartIcon.classList.remove('text-danger');
+                    }
+                    
+                    likeCount.textContent = data.likeCount;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    // Handle project deletion
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to delete this project?')) {
+                return;
+            }
+
+            const projectId = this.dataset.projectId;
+            try {
+                const response = await fetch(`/accounts/project/${projectId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Find and remove the project card
+                    const projectCard = this.closest('.col-12');
+                    projectCard.remove();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+});
+</script>
+{% if record_view_ids %}
+{{ record_view_ids|json_script:"project-ids" }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var projectIds = JSON.parse(document.getElementById('project-ids').textContent);
+        projectIds.forEach(function(pid) {
+            fetch('/accounts/record-project-view/', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: 'project_id=' + pid
+            });
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

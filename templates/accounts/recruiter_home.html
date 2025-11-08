@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recruiter Dashboard{% endblock %}
+
+{% block extrastyles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'accounts/recruiter_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Mobile Toggle Button -->
+<button class="btn btn-pink mobile-toggle d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#recruiterSidebar">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<div class="recruiter-sidebar" id="recruiterSidebar">
+    <div class="p-3 text-center">
+        {% if recruiter.company_logo %}
+            <img src="{{ recruiter.company_logo.url }}" alt="Company Logo" class="img-fluid mb-3" style="max-height: 80px;">
+        {% endif %}
+        <h5 class="mb-0">{{ company_name }}</h5>
+        <small>{{ contact_person }}</small>
+    </div>
+    <hr class="mx-3 bg-white">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="#dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/accounts/browse/talent/">
+                <i class="fas fa-users"></i> Browse Talent
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'recruiter_student_projects' %}">
+                <i class="fas fa-code"></i> Student Projects
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'saved_profiles' %}">
+                <i class="fas fa-bookmark"></i> Saved Profiles
+            </a>
+        </li>
+        <!-- Messages and Settings links intentionally removed for recruiter sidebar -->
+    </ul>
+    <div class="mt-auto p-3">
+        <a href="{% url 'logout' %}" class="btn btn-light w-100">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Welcome Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Welcome back, {{ contact_person }}!</h2>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3 class="mb-2" id="profile-views-count">{{ profile_views }}</h3>
+                <p class="text-muted mb-0">Profile Views</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <h3 class="mb-2" id="saved-profiles-count">{{ saved_profiles }}</h3>
+                <p class="text-muted mb-0">Saved Profiles</p>
+            </div>
+        </div>
+        <!-- Messages Sent card removed as requested -->
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="mb-2" id="hiring-process-count">{{ hiring_process }}</h3>
+                <p class="text-muted mb-0">Hiring Process</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-bar">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" placeholder="Search students, projects, or skills...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select">
+                    <option>All Categories</option>
+                    <option>Web Development</option>
+                    <option>Mobile Apps</option>
+                    <option>Data Science</option>
+                    <option>Machine Learning</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-tags mt-3">
+            <span class="filter-tag">Python</span>
+            <span class="filter-tag">JavaScript</span>
+            <span class="filter-tag">React</span>
+            <span class="filter-tag">Django</span>
+            <span class="filter-tag">+ Add Filter</span>
+        </div>
+    </div>
+
+    <!-- Top Talent Section -->
+    <h4 class="mb-3">Top Talent</h4>
+    <div class="row">
+        {% for student in top_students|default:"123" %}
+        <div class="col-md-4">
+            <div class="student-card">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="{% if student.image %}{{ student.image.url }}{% else %}{% static 'accounts/default_profile.png' %}{% endif %}" alt="Student" class="student-image me-3">
+                    <div>
+                        <h5 class="mb-1">{{ student.student_name|default:"Student Name" }}</h5>
+                        <p class="text-muted mb-0">{{ student.course_details|default:"Full Stack Developer" }}</p>
+                    </div>
+                </div>
+                <div class="project-tags mb-3">
+                    <span class="project-tag">Python</span>
+                    <span class="project-tag">React</span>
+                    <span class="project-tag">Node.js</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'view_student_profile' student.id %}" class="btn btn-pink btn-sm">View Profile</a>
+                    <button class="btn btn-outline-pink btn-sm save-profile-btn" data-student-id="{{ student.id }}">
+                        <i class="fas fa-bookmark{% if student in recruiter.saved_students.all %} text-pink{% endif %}"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Recent Projects Section -->
+    <h4 class="mb-3 mt-4">Recent Projects</h4>
+    <div class="row">
+        {% for project in recent_projects|default:"123" %}
+        <div class="col-md-4">
+            <div class="project-card">
+                    <img src="{% if project.project.screenshot %}{{ project.project.screenshot.url }}{% else %}{% static 'accounts/project_placeholder.png' %}{% endif %}" alt="Project" class="project-image w-100">
+                <div class="project-content">
+                    <h5>{{ project.project.title|default:"Project Title" }}</h5>
+                    <p class="text-muted">{{ project.project.description|default:"A brief description of the project goes here..." }}</p>
+                    <div class="project-tags">
+                        {% for tag in project.tags %}
+                        <span class="project-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <a href="{% url 'view_project_details' project.project.id %}" class="btn btn-pink btn-sm">View Details</a>
+                        <div>
+                            <button class="btn btn-outline-pink btn-sm me-2">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="btn btn-outline-pink btn-sm share-project-btn" data-project-url="{% url 'view_project_details' project.project.id %}">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block extrascripts %}
+<style>
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+.toast {
+    background: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Save Profile Button Handler
+    document.querySelectorAll('.save-profile-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const studentId = this.dataset.studentId;
+            const icon = this.querySelector('i');
+            const button = this;
+            
+            // Disable button while processing
+            button.disabled = true;
+            
+            fetch(`/accounts/student/${studentId}/save/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Toggle bookmark color
+                    icon.classList.toggle('text-pink');
+                    // Update saved profiles count in stats
+                    document.getElementById('saved-profiles-count').textContent = data.savedCount;
+                    // Show success message
+                    showToast(data.saved ? 'Profile saved successfully!' : 'Profile removed from saved list');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error saving profile. Please try again.');
+            })
+            .finally(() => {
+                // Re-enable button
+                button.disabled = false;
+            });
+        });
+    });
+
+    // Share Project Button Handler
+    document.querySelectorAll('.share-project-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const projectUrl = this.dataset.projectUrl;
+            const fullUrl = window.location.origin + projectUrl;
+            
+            // Create a temporary input to copy the URL
+            const tempInput = document.createElement('input');
+            tempInput.value = fullUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            // Show a toast or alert
+            alert('Project URL copied to clipboard!');
+        });
+    });
+
+    // CSRF token helper function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Mobile sidebar toggle
+    const sidebar = document.getElementById('recruiterSidebar');
+    const toggleBtn = document.querySelector('.mobile-toggle');
+    
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        }
+    });
+
+    // Filter tags click handler
+    const filterTags = document.querySelectorAll('.filter-tag');
+    filterTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            if (tag.textContent !== '+ Add Filter') {
+                tag.remove();
+            }
+        });
+    });
+
+    // Toast notification function
+    function showToast(message) {
+        // Check if toast container exists, if not create it
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+
+        // Trigger reflow and add opacity
+        setTimeout(() => {
+            toast.style.opacity = '1';
+        }, 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toastContainer.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock content %}

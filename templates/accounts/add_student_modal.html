@@ -1,0 +1,162 @@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Student Modal logic
+    const addStudentBtn = document.getElementById('addStudentBtn');
+    const addStudentModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
+    if(addStudentBtn) {
+        addStudentBtn.onclick = function(e) {
+            e.preventDefault();
+            addStudentModal.show();
+        };
+    }
+    // Set max attribute on date input to prevent selecting future dates
+    (function setMaxDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const maxDate = `${yyyy}-${mm}-${dd}`;
+        const dateInput = document.getElementById('courseJoinedDate');
+        if (dateInput) {
+            dateInput.max = maxDate;
+        }
+    })();
+    const addStudentForm = document.getElementById('addStudentForm');
+    if(addStudentForm) {
+        addStudentForm.onsubmit = async function(e) {
+            e.preventDefault();
+            document.getElementById('addStudentError').classList.add('d-none');
+            document.getElementById('addStudentError').textContent = "";
+            document.getElementById('addStudentSuccess').classList.add('d-none');
+
+            // Read course joined date from the date picker (YYYY-MM-DD)
+            const dateEl = document.getElementById('courseJoinedDate');
+            if (!dateEl) {
+                document.getElementById('addStudentError').textContent = 'Course Joined Date input is not available.';
+                document.getElementById('addStudentError').classList.remove('d-none');
+                return;
+            }
+            const dateVal = dateEl.value;
+            if (!dateVal) {
+                document.getElementById('addStudentError').textContent = 'Please select the Course Joined Date.';
+                document.getElementById('addStudentError').classList.remove('d-none');
+                return;
+            }
+
+            // Fetch values for validation
+            const email = document.getElementById('studentEmail').value.trim();
+            const contact = document.getElementById('studentContact').value.trim();
+
+            // Regex patterns
+            const emailPattern = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            const phonePattern = /^\+?[1-9]\d{7,14}$/; // E.164 format 8-15 digits, leading + optional
+
+            if (!emailPattern.test(email)) {
+                document.getElementById('addStudentError').textContent = 'Please enter a valid email address.';
+                document.getElementById('addStudentError').classList.remove('d-none');
+                document.getElementById('studentEmail').focus();
+                return;
+            }
+            if (!phonePattern.test(contact)) {
+                document.getElementById('addStudentError').textContent = 'Invalid contact number. Enter a valid international number (e.g., +14155552671).';
+                document.getElementById('addStudentError').classList.remove('d-none');
+                document.getElementById('studentContact').focus();
+                return;
+            }
+            const formData = new FormData(addStudentForm);
+            const response = await fetch('/accounts/add-student/', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const data = await response.json();
+            if(data.success) {
+                document.getElementById('addStudentSuccess').classList.add('d-none');
+                document.getElementById('addStudentError').classList.add('d-none');
+                addStudentForm.reset();
+                // Show toast notification and close modal after 1.5s
+                const toast = document.getElementById('addStudentToast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide();
+                }, 1500);
+            } else {
+                document.getElementById('addStudentError').textContent = data.error || 'Error adding student.';
+                document.getElementById('addStudentError').classList.remove('d-none');
+            }
+        };
+    }
+});
+</script>
+<!-- Add Student Modal -->
+<div  class="modal fade " id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 3px solid #FF0488;"
+">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentModalLabel">Add Student</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="studentUsername" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="studentUsername" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentPassword" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="studentPassword" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentName" class="form-label">Student Name</label>
+                                <input type="text" class="form-control" id="studentName" name="student_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentContact" class="form-label">Student Contact</label>
+                                <input type="text" class="form-control" id="studentContact" name="student_contact" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentImage" class="form-label">Student Image</label>
+                                <input type="file" class="form-control" id="studentImage" name="student_image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="studentEmail" class="form-label">Student Email</label>
+                                <input type="email" class="form-control" id="studentEmail" name="student_email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentAddress" class="form-label">Student Address</label>
+                                <textarea class="form-control" id="studentAddress" name="student_address" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="courseJoinedDate" class="form-label">Course Joined Date</label>
+                                <input type="date" class="form-control" id="courseJoinedDate" name="course_joined_date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="courseDetails" class="form-label">Course Details</label>
+                                <textarea class="form-control" id="courseDetails" name="course_details" rows="2" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="addStudentError" class="alert alert-danger d-none"></div>
+                    <div id="addStudentSuccess" class="alert alert-success d-none"></div>
+                    <div id="addStudentToast" class="toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 2000; display:none;">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Student added successfully!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100" style="background:#FF0488;border-color:#FF0488;color:#fff;font-weight:700">Add Student</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

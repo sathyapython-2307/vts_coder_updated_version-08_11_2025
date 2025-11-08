@@ -1,0 +1,148 @@
+/* Sidebar styles for admin home */
+.admin-sidebar {
+    width: 260px;
+    background: #ffa94d;
+    color: #222;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+}
+@media (max-width: 991.98px) {
+    .admin-sidebar {
+        transform: translateX(-110vw);
+    }
+    .admin-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.3);
+        z-index: 1099;
+    }
+    .admin-sidebar.sidebar-open ~ .sidebar-overlay {
+        display: block;
+    }
+}
+.admin-sidebar .logo-row {
+    display: flex;
+    align-items: center;
+    padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+.admin-sidebar .logo-row img {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
+.admin-sidebar .logo-row span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+.admin-sidebar .nav {
+    margin-top: 1.5rem;
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 0 1rem;
+}
+
+/* Logout Form */
+.admin-sidebar .logout-form {
+    width: 100%;
+    padding: 1.5rem 1rem 1rem 1rem;
+    margin-top: auto;
+    margin-bottom: 0.5rem;
+}
+
+.admin-sidebar .btn-logout {
+    width: 100%;
+    padding: 0.7rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+/* ...existing code... */
+.admin-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    background: none;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+/* Hover effect: darker pink background, white text/icons */
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link:focus {
+    color: #ffffff !important;
+    background: #E60073 !important; /* darker than #FF0488 */
+    box-shadow: 0 6px 18px rgba(230,0,115,0.08);
+}
+
+/* Active nav link styling: use the same darker pink with white text/icons */
+.admin-sidebar .nav-link.active {
+    color: #ffffff !important;
+    background: #E60073 !important;
+    box-shadow: 0 6px 18px rgba(230,0,115,0.12);
+}
+.admin-sidebar .nav-link svg {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+/* Make SVG icons inherit the current text color (so they change on hover/active) */
+.admin-sidebar .nav-link svg,
+.admin-sidebar .nav-link svg * {
+    fill: currentColor !important;
+}
+@media (max-width: 991.98px) {
+    .admin-sidebar .logo-row {
+        padding: 0.7rem 1rem 0.7rem 1rem;
+        width: 100%;
+    }
+    .admin-sidebar .nav {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .admin-sidebar .nav-link {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+    }
+}
+.admin-main-content {
+    margin-left: 280px;
+    padding: 2rem;
+    transition: margin-left 0.3s ease;
+}
+@media (max-width: 768px) {
+    .admin-main-content {
+        margin-left: 0;
+        margin-top: 70px;
+        padding: 1rem;
+    }
+}
+.admin-sidebar.show {
+  transform: translateX(0) !important;
+}
+.sidebar-overlay.show {
+  display: block !important;
+}

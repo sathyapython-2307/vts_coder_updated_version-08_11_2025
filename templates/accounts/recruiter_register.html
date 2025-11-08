@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="login-card" style="max-width: 500px; width: 100%; padding: 1.5rem;">
+            <div class="text-center mb-3">
+                <h2 class="fw-bold login-title">Recruiter Registration</h2>
+            </div>
+            <form id="recruiterForm" method="post" class="login-form">
+                {% csrf_token %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} py-2">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="mb-2">
+                    <label for="email" class="form-label fw-semibold small mb-1">Email Address*</label>
+                    <input type="email" class="form-control form-control-sm" id="email" name="email" required>
+                </div>
+                
+                <div class="mb-2">
+                    <label for="password" class="form-label fw-semibold small mb-1">Password*</label>
+                    <input type="password" class="form-control form-control-sm" id="password" name="password" required>
+                </div>
+
+                <div class="mb-2">
+                    <label for="company_name" class="form-label fw-semibold small mb-1">Company Name*</label>
+                    <input type="text" class="form-control form-control-sm" id="company_name" name="company_name" required>
+                </div>
+
+                <div class="mb-2">
+                    <label for="company_linkedin" class="form-label fw-semibold small mb-1">Company LinkedIn Profile</label>
+                    <input type="url" class="form-control form-control-sm" id="company_linkedin" name="company_linkedin" placeholder="https://www.linkedin.com/company/your-company">
+                </div>
+
+                <div class="mb-2">
+                    <label for="company_logo" class="form-label fw-semibold small mb-1">Company Logo</label>
+                    <input type="file" class="form-control form-control-sm" id="company_logo" name="company_logo" accept="image/*">
+                </div>
+
+                <div class="mb-2">
+                    <label for="company_address" class="form-label fw-semibold small mb-1">Company Address*</label>
+                    <textarea class="form-control form-control-sm" id="company_address" name="company_address" rows="2" required></textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label for="contact_person" class="form-label fw-semibold small mb-1">Contact Person Name*</label>
+                    <input type="text" class="form-control form-control-sm" id="contact_person" name="contact_person" required>
+                </div>
+
+                <div class="mb-2">
+                    <label for="phone_number" class="form-label fw-semibold small mb-1">Phone Number*</label>
+                    <input type="tel" class="form-control form-control-sm" id="phone_number" name="phone_number" required>
+                </div>
+
+                <div class="mb-3">
+                    <p class="text-center fw-semibold small mb-2" style="color: black;">Registration Fee: ₹999.00</p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="button" id="buyButton" class="btn btn-sm btn-pink fw-bold btn-login-pink">Buy & Register</button>
+                    <a href="/accounts/login/" class="btn btn-sm btn-secondary">Back to Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold text-success">Registration Successful! 🎉</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                    </div>
+                    <h4 class="mb-3">Thank you for registering!</h4>
+                    <p class="mb-0">Your payment has been processed successfully.</p>
+                    <p class="text-muted">Please wait for admin approval to access your account.</p>
+                    <p class="small text-muted">You will receive an email notification once your account is approved.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <a href="/accounts/login/" class="btn btn-pink fw-bold btn-login-pink">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('buyButton').addEventListener('click', function() {
+            const formData = new FormData();
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('company_name', document.getElementById('company_name').value);
+            formData.append('company_linkedin', document.getElementById('company_linkedin').value);
+            formData.append('company_address', document.getElementById('company_address').value);
+            formData.append('contact_person', document.getElementById('contact_person').value);
+            formData.append('phone_number', document.getElementById('phone_number').value);
+            
+            const logoFile = document.getElementById('company_logo').files[0];
+            if (logoFile) {
+                formData.append('company_logo', logoFile);
+            }
+
+            // Create Razorpay order
+            const orderData = new FormData();
+            orderData.append('email', document.getElementById('email').value);
+
+            fetch('/accounts/create-recruiter-order/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: orderData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.order_id) {
+                    var options = {
+                        key: 'rzp_test_RbaHeEXOm8aOxe',
+                        amount: data.amount,
+                        currency: "INR",
+                        name: "VTS Coder",
+                        description: "Recruiter Registration Fee",
+                        order_id: data.order_id,
+                        handler: function (response) {
+                            // Handle payment success
+                            formData.append('payment_id', response.razorpay_payment_id);
+                            formData.append('order_id', data.order_id);
+                            
+                            fetch('/accounts/complete-recruiter-registration/', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                                },
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                                    successModal.show();
+                                } else {
+                                    alert('Registration failed: ' + data.error);
+                                }
+                            });
+                        },
+                        prefill: {
+                            email: formData.email,
+                            contact: formData.phone_number
+                        },
+                    };
+                    var rzp = new Razorpay(options);
+                    rzp.open();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create order. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

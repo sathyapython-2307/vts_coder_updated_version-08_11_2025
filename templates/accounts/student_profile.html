@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/student_profile.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- Sidebar Toggle Button -->
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+        <button class="close-btn d-lg-none" id="closeSidebarBtn" aria-label="Close sidebar">
+            &times;
+        </button>
+    </div>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="{% url 'student_home' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6676C9.93001 16.5 9.33413 17.1703 9.33413 18V21V22.125C9.33413 23.1609 8.58823 24 7.66732 24H6.66723H5.33795C5.27545 24 5.21294 23.9953 5.15044 23.9906C5.10043 23.9953 5.05043 24 5.00043 24H4.3337C3.41279 24 2.66689 23.1609 2.66689 22.125V16.875C2.66689 16.8328 2.66689 16.7859 2.67106 16.7438V13.4813H1.33345C0.583383 13.4813 0 12.825 0 11.9766C0 11.5547 0.125011 11.1797 0.416702 10.8516L11.1009 0.375C11.3926 0.046875 11.726 0 12.0177 0C12.3094 0 12.6427 0.09375 12.8928 0.328125L23.5353 10.8516C23.8687 11.1797 24.0354 11.5547 23.9937 11.9766Z" fill="white"/>
+            </svg>
+            <span class="overview-label">Overview</span>
+        </a>
+        <a class="nav-link" href="{% url 'student_projects' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="white"/>
+            </svg>
+            <span class="projects-label">Projects</span>
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+
+<!-- Main Content -->
+<div class="admin-main-content">
+    <div class="container profile-container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+            <!-- Profile Header -->
+            <div class="profile-header mb-5">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <div class="profile-pic-container">
+                            {% if student.image %}
+                                <img src="{{ student.image.url }}" alt="{{ student.student_name }}" class="profile-pic rounded-circle">
+                            {% else %}
+                                <img src="{% static 'accounts/default_profile.png' %}" alt="{{ student.student_name }}" class="profile-pic rounded-circle">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="profile-info">
+                            <div class="d-flex align-items-center mb-4">
+                                <h2 class="mb-0 me-3">{{ student.student_name }}</h2>
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if request.user == student.user %}
+                                    <!-- Pending Follow Requests dropdown if viewing own profile -->
+                                    {% if pending_requests %}
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle follow-requests" 
+                                                type="button" 
+                                                id="followRequestsDropdown" 
+                                                data-bs-toggle="dropdown" 
+                                                aria-expanded="false">
+                                            <i class="fas fa-user-friends me-2"></i>
+                                            Requests ({{ pending_requests|length }})
+                                        </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="followRequestsDropdown">
+                                        {% if pending_requests %}
+                                            {% for request in pending_requests %}
+                                            <li>
+                                                <div class="dropdown-item">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="me-3">{{ request.follower.username }}</span>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="button"
+                                                                    class="btn btn-success btn-sm handle-follow-request" 
+                                                                    data-follow-id="{{ request.id }}" 
+                                                                    data-action="accept">
+                                                                <small>Accept</small>
+                                                            </button>
+                                                            <button type="button"
+                                                                    class="btn btn-danger btn-sm handle-follow-request" 
+                                                                    data-follow-id="{{ request.id }}" 
+                                                                    data-action="reject">
+                                                                <small>Reject</small>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li><div class="dropdown-item text-muted">No pending requests</div></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                {% else %}
+                                <button type="button" 
+                                    class="btn follow-btn ms-3 btn-sm {% if follow_status == 'accepted' %}btn-secondary{% elif follow_status == 'pending' %}btn-warning{% else %}btn-primary{% endif %}"
+                                    data-student-id="{{ student.id }}"
+                                    {% if follow_status != 'none' %}disabled{% endif %}>
+                                    <span class="follow-text">
+                                        {% if follow_status == 'accepted' %}Following
+                                        {% elif follow_status == 'pending' %}Requested
+                                        {% elif follow_status == 'rejected' %}Follow
+                                        {% else %}Follow{% endif %}
+                                    </span>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="profile-stats mb-4">
+                                <div>
+                                    <strong>{{ projects_count }}</strong>
+                                    <span>projects</span>
+                                </div>
+                                <div>
+                                    <strong>{{ followers_count }}</strong>
+                                    <span>followers</span>
+                                </div>
+                                <div>
+                                    <strong>{{ following_count }}</strong>
+                                    <span>following</span>
+                                </div>
+                            </div>
+                            {% if student.bio %}
+                            <div class="profile-bio">
+                                <i class="fas fa-quote-left me-2 text-primary"></i>
+                                {{ student.bio }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="profile-projects">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#projects" data-bs-toggle="tab">
+                            <i class="fas fa-th me-2"></i>All Projects
+                        </a>
+                    </li>
+                    <li class="nav-item ms-auto">
+                        <span class="nav-link text-muted">
+                            <i class="fas fa-project-diagram me-2"></i>{{ projects_count }} Projects
+                        </span>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="projects">
+                        <div class="project-grid">
+                            {% for project in projects %}
+                            <div class="project-card" onclick="window.location='{{ project.output_link }}'" style="cursor: pointer;">
+                                <div class="project-thumbnail">
+                                    {% if project.screenshot %}
+                                        <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" class="img-fluid">
+                                    {% else %}
+                                        <div class="no-screenshot">
+                                            <i class="fas fa-code"></i>
+                                            <span>No Preview Available</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="project-overlay">
+                                        <div class="project-stats">
+                                            <span><i class="fas fa-eye"></i> {{ project.view_count }}</span>
+                                            <span><i class="fas fa-heart"></i> {{ project.like_count }}</span>
+                                            <span class="ms-auto">
+                                                <i class="fas fa-external-link-alt"></i>
+                                                <span class="ms-1">View Output</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="project-content">
+                                    <h3 class="project-title">{{ project.title }}</h3>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        <small>{{ project.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center p-5 w-100">
+                                <i class="fas fa-folder-open text-muted mb-3" style="font-size: 3rem;"></i>
+                                <h4 class="text-muted">No Projects Yet</h4>
+                                <p class="text-muted">Start sharing your amazing work with the community!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Follow request handling -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+
+    // Get CSRF token
+    const csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+    if (!csrfTokenInput) {
+        console.error('CSRF Token input not found');
+        return;
+    }
+    const csrfToken = csrfTokenInput.value;
+    console.log('CSRF Token found');
+
+    // Get the user ID from the URL
+    const urlParts = window.location.pathname.split('/');
+    const studentId = urlParts[2]; // Should be the ID in /student/{id}/profile/
+    console.log('Current profile student ID:', studentId);
+
+    // Initialize handle follow request buttons
+    document.querySelectorAll('.handle-follow-request').forEach(button => {
+        button.addEventListener('click', handleFollowRequest);
+    });
+
+    // Function to handle follow request accept/reject
+    async function handleFollowRequest(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Handle follow request button clicked');
+
+        const button = e.currentTarget;
+        const followId = button.dataset.followId;
+        const action = button.dataset.action;
+        
+        if (!followId || !action) {
+            console.error('Missing follow ID or action');
+            return;
+        }
+
+        console.log(`Processing ${action} for follow request ${followId}`);
+
+        // Disable all buttons in the group
+        const buttonGroup = button.closest('.btn-group');
+        const buttons = buttonGroup.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        const originalText = button.innerHTML;
+        button.innerHTML = '<small>Processing...</small>';
+
+        try {
+            const response = await fetch(`/accounts/student/follow-request/${followId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ action })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Response:', data);
+
+            if (data.success) {
+                // Remove the list item containing this request
+                const listItem = button.closest('li');
+                listItem.remove();
+
+                // Update followers count
+                const followersCount = document.querySelector('.profile-stats span:nth-child(2) strong');
+                if (followersCount) {
+                    followersCount.textContent = data.followers_count;
+                }
+
+                // Update remaining requests count
+                const remainingRequestElements = document.querySelectorAll('.dropdown-menu .btn-group');
+                const remainingCount = remainingRequestElements.length;
+                const dropdownButton = document.querySelector('#followRequestsDropdown');
+                
+                if (dropdownButton) {
+                    if (remainingCount > 0) {
+                        dropdownButton.textContent = `Follow Requests (${remainingCount})`;
+                    } else {
+                        // If no more requests, update dropdown content
+                        const dropdownMenu = document.querySelector('.dropdown-menu');
+                        dropdownMenu.innerHTML = '<li><div class="dropdown-item text-muted">No pending requests</div></li>';
+                        dropdownButton.textContent = 'Follow Requests (0)';
+                    }
+                }
+            } else {
+                throw new Error(data.message || 'Failed to process request');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Re-enable buttons and restore original text
+            buttons.forEach(btn => btn.disabled = false);
+            button.innerHTML = originalText;
+            alert(error.message || 'Failed to process request. Please try again.');
+        }
+    }
+
+    // Handle follow requests
+    const followBtn = document.querySelector('.follow-btn');
+    console.log('Follow button found:', followBtn);
+
+    if (!followBtn) {
+        console.error('Follow button not found, but this is not user\'s profile. This might be an error.');
+        return;
+    }    followBtn.addEventListener('click', async function(e) {
+        console.log('Follow button clicked');
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Double check if button should be disabled
+        if (this.hasAttribute('disabled')) {
+            console.log('Button is disabled');
+            return;
+        }
+
+        // Get the student ID from the button's data attribute
+        const studentId = this.dataset.studentId;
+        if (!studentId) {
+            console.error('No student ID found in button data attribute');
+            return;
+        }
+        console.log('Sending follow request for student:', studentId);
+
+        // Disable the button immediately to prevent double clicks
+        this.disabled = true;
+        const followText = this.querySelector('.follow-text');
+        const originalText = followText.textContent;
+        followText.textContent = 'Processing...';
+
+        try {
+            console.log('Making fetch request...');
+            const response = await fetch(`/accounts/student/${studentId}/request-follow/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                credentials: 'same-origin'
+            });
+            console.log('Response received:', response);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                // Update button appearance
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-warning');
+                followText.textContent = 'Requested';
+                this.disabled = true;
+                
+                // Update the UI to show request is pending
+                console.log('Follow request sent successfully');
+            } else {
+                // Revert button to original state
+                this.classList.remove('btn-warning');
+                this.classList.add('btn-primary');
+                followText.textContent = originalText;
+                this.disabled = false;
+                alert(data.message || 'Failed to send follow request');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Revert button to original state
+            this.classList.remove('btn-warning');
+            this.classList.add('btn-primary');
+            followText.textContent = originalText;
+            this.disabled = false;
+            alert('Failed to send follow request. Please try again.');
+        }
+    });
+
+    // Initialize Bootstrap dropdown
+    const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+    const dropdownList = [...dropdownElementList].map(dropdownToggleEl => {
+        return new bootstrap.Dropdown(dropdownToggleEl);
+    });
+
+    // Handle follow request actions (accept/reject)
+    document.querySelectorAll('.handle-follow-request').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Disable both buttons in the group to prevent double clicks
+            const buttonGroup = this.closest('.btn-group');
+            const buttons = buttonGroup.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            const followId = this.dataset.followId;
+            const action = this.dataset.action;
+            const originalText = this.textContent;
+            this.innerHTML = '<small>Processing...</small>';
+            
+            try {
+                const response = await fetch(`/accounts/student/follow-request/${followId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ action })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Remove the entire list item
+                    const listItem = this.closest('li');
+                    listItem.remove();
+                    
+                    // Update followers count in stats
+                    const followersCount = document.querySelector('.profile-stats span:nth-child(2) strong');
+                    if (followersCount) {
+                        followersCount.textContent = data.followers_count;
+                    }
+                    
+                    // Count remaining requests (excluding the "No pending requests" item)
+                    const remainingRequests = document.querySelectorAll('.dropdown-menu .btn-group').length;
+                    const dropdownButton = document.querySelector('.dropdown-toggle');
+                    
+                    if (dropdownButton) {
+                        if (remainingRequests > 0) {
+                            dropdownButton.textContent = `Follow Requests (${remainingRequests})`;
+                        } else {
+                            // If no more requests, add "No pending requests" message
+                            const dropdownMenu = document.querySelector('.dropdown-menu');
+                            dropdownMenu.innerHTML = '<li><div class="dropdown-item text-muted">No pending requests</div></li>';
+                            dropdownButton.textContent = 'Follow Requests (0)';
+                        }
+                    }
+                } else {
+                    // Re-enable buttons and restore text on failure
+                    buttons.forEach(btn => btn.disabled = false);
+                    this.innerHTML = `<small>${originalText}</small>`;
+                    alert(data.message || 'Failed to process request');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Re-enable buttons and restore text on error
+                buttons.forEach(btn => btn.disabled = false);
+                this.innerHTML = `<small>${originalText}</small>`;
+                alert('Failed to process request. Please try again.');
+            }
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/projects.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/project-cards.css' %}">
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+        <button class="close-btn d-lg-none" id="closeSidebarBtn" aria-label="Close sidebar">
+            &times;
+        </button>
+    </div>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="{% url 'admin_home' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-middle">
+                <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6684C9.93091 16.5 9.335 17.1703 9.335 18V21V22.125C9.335 23.1609 8.58911 24 7.66825 24H6.66825H5.31388C5.25638 24 5.19825 24 5.14013 23.9953C5.09419 24 5.0365 24 4.99056 24H4.33169C3.41083 24 2.66497 23.1609 2.66497 22.125V17.3297C2.66497 17.2453 2.66497 17.1563 2.66497 17.0719V13.4813H1.33372C0.62527 13.4813 0.000244141 12.8203 0.000244141 11.9766C0.000244141 11.5547 0.156369 11.1797 0.406369 10.8844L11.073 0.375C11.323 0.140625 11.6668 0 12.0105 0C12.3543 0 12.698 0.140625 12.948 0.375L23.6105 10.8844C23.8605 11.1797 24.0167 11.5547 23.9937 11.9766Z" fill="#374151"/>
+            </svg>
+            <span class="overview-label">Overview</span>
+        </a>
+        <a class="nav-link active" href="{% url 'admin_projects' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+                <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252ZM3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996ZM20.25 21.3749C20.5484 21.3749 20.8345 21.2563 21.0455 21.0453C21.2565 20.8344 21.375 20.5482 21.375 20.2498C21.375 19.9514 21.2565 19.6653 21.0455 19.4543C20.8345 19.2433 20.5484 19.1248 20.25 19.1248C19.9516 19.1248 19.6655 19.2433 19.4545 19.4543C19.2435 19.6653 19.125 19.9514 19.125 20.2498C19.125 20.5482 19.2435 20.8344 19.4545 21.0453C19.6655 21.2563 19.9516 21.3749 20.25 21.3749Z" fill="black"/>
+            </svg>
+            <span class="projects-label">Projects</span>
+        </a>
+        <a class="nav-link" href="{% url 'admin_profiles' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-middle">
+                <path d="M3 24H21C22.6547 24 24 22.4625 24 20.5714V6.85714C24 4.96607 22.6547 3.42857 21 3.42857H13.5C13.0266 3.42857 12.5812 3.17679 12.3 2.74286L11.4 1.37143C10.8328 0.508928 9.94219 0 9 0H3C1.34531 0 0 1.5375 0 3.42857V20.5714C0 22.4625 1.34531 24 3 24Z" fill="#374151"/>
+            </svg>
+            <span class="profile-label">Profile</span>
+        </a>
+        <a class="nav-link" href="#" id="addStudentBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm4.216 1.447A2.5 2.5 0 0 1 15 10.5V12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 1 2.784-2.553A4.992 4.992 0 0 1 8 9c1.306 0 2.417-.417 3.216-1.553zM8 10a3.978 3.978 0 0 0-3.468 2H13.468A3.978 3.978 0 0 0 8 10z"/></svg>
+            Add Students
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+<div class="admin-main-content">
+    <h2>All Student Projects</h2>
+    <div class="row g-4 mt-3">
+        {% for project in projects %}
+    <div class="col-12 col-md-6 col-lg-4">
+            <div class="project-card">
+                <div class="project-screenshot-container">
+                    {% if project.screenshot %}
+                    <a href="{{ project.output_link }}" target="_blank" class="screenshot-link">
+                        <img src="{{ project.screenshot.url }}" alt="Screenshot" class="project-screenshot">
+                    </a>
+                    {% else %}
+                    <div class="no-screenshot">No Screenshot</div>
+                    {% endif %}
+                </div>
+                <div class="project-info mt-3 project-content">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="student-name text-muted mb-2">By: {{ project.student.student_name }}</p>
+                    <p class="text-muted mb-2 date"><small>{{ project.created_at|timesince }} ago</small></p>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>{{ project.views.count }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                                </svg>
+                                <span>{{ project.likes.count }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-auto actions">
+                            {% if project.project_link %}
+                            <a href="{{ project.project_link }}" target="_blank" class="btn btn-outline-primary btn-sm btn-view">View Code</a>
+                            {% endif %}
+                            {% if project.output_link %}
+                            <a href="{{ project.output_link }}" target="_blank" class="btn btn-outline-success btn-sm btn-view">View Live</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include "accounts/add_student_modal.html" %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+{% endblock %}

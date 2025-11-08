@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Profiles{% endblock %}
+
+{% block extrastyles %}
+<link rel="stylesheet" href="{% static 'accounts/recruiter_dashboard.css' %}">
+<style>
+.student-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.student-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.student-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.skill-tag {
+    background: #ffe4e1;
+    color: #ff1493;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.project-preview {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #ff1493;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'accounts/recruiter_sidebar.html' with active_tab='saved' %}
+
+<div class="main-content">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Saved Profiles</h2>
+            <div class="d-flex gap-2">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" id="searchInput" 
+                           placeholder="Search saved profiles...">
+                </div>
+            </div>
+        </div>
+
+        {% if students_with_projects %}
+            <div class="row" id="savedProfilesList">
+                {% for student_data in students_with_projects %}
+                    <div class="col-12 student-card-container">
+                        <div class="student-card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{% if student_data.student.image %}{{ student_data.student.image.url }}{% else %}{% static 'accounts/default_profile.png' %}{% endif %}" 
+                                             alt="{{ student_data.student.student_name }}" class="student-image me-3">
+                                        <div>
+                                            <h5 class="mb-1">{{ student_data.student.student_name }}</h5>
+                                            <p class="text-muted mb-0">{{ student_data.student.course_details }}</p>
+                                        </div>
+                                    </div>
+                                    <p class="mb-3">{{ student_data.student.bio|truncatechars:150 }}</p>
+                                    <div class="d-flex gap-2 mb-3">
+                                        <a href="{% url 'view_student_profile' student_data.student.id %}" 
+                                           class="btn btn-pink">View Profile</a>
+                                        <button class="btn btn-outline-pink save-profile-btn" 
+                                                data-student-id="{{ student_data.student.id }}">
+                                            <i class="fas fa-bookmark"></i> Unsave
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="mb-2">Skills & Technologies</h6>
+                                    <div class="mb-3">
+                                        {% for skill in student_data.skills %}
+                                            <span class="skill-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% if student_data.projects %}
+                                        <h6 class="mb-2">Recent Projects</h6>
+                                        {% for project in student_data.projects %}
+                                            <div class="project-preview mb-2">
+                                                <h6 class="mb-1">{{ project.title }}</h6>
+                                                <p class="text-muted small mb-2">{{ project.description|truncatechars:100 }}</p>
+                                                <a href="{% url 'view_project_details' project.id %}" 
+                                                   class="btn btn-sm btn-outline-pink">View Project</a>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bookmark mb-3"></i>
+                <h4>No Saved Profiles Yet</h4>
+                <p class="text-muted">Start saving profiles to keep track of talented developers.</p>
+                <a href="{% url 'recruiter_home' %}" class="btn btn-pink">
+                    <i class="fas fa-search me-2"></i>Browse Talent
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extrascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const savedProfilesList = document.getElementById('savedProfilesList');
+    const studentCards = document.querySelectorAll('.student-card-container');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            studentCards.forEach(card => {
+                const studentName = card.querySelector('h5').textContent.toLowerCase();
+                const skills = Array.from(card.querySelectorAll('.skill-tag'))
+                    .map(tag => tag.textContent.toLowerCase());
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                const matches = studentName.includes(searchTerm) || 
+                              skills.some(skill => skill.includes(searchTerm)) ||
+                              description.includes(searchTerm);
+                              
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    }
+
+    // Save/Unsave functionality
+    document.querySelectorAll('.save-profile-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const studentId = this.dataset.studentId;
+            const cardContainer = this.closest('.student-card-container');
+            
+            fetch(`/accounts/student/${studentId}/save/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the card with animation
+                    cardContainer.style.transition = 'opacity 0.3s ease-out';
+                    cardContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        cardContainer.remove();
+                        
+                        // Update the saved count in stats if it exists
+                        const savedCountElement = document.getElementById('saved-profiles-count');
+                        if (savedCountElement) {
+                            savedCountElement.textContent = data.savedCount;
+                        }
+                        
+                        // Show empty state if no more saved profiles
+                        if (savedProfilesList && savedProfilesList.children.length === 0) {
+                            location.reload(); // Reload to show empty state
+                        }
+                    }, 300);
+                    
+                    // Show success message
+                    showToast('Profile removed from saved list');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error removing profile. Please try again.');
+            });
+        });
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Toast notification function
+function showToast(message) {
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        `;
+        document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.cssText = `
+        background: #333;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in;
+    `;
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 10);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            toastContainer.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+</script>
+{% endblock %}
+{% endblock content %}

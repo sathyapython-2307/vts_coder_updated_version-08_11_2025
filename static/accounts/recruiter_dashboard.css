@@ -1,0 +1,186 @@
+/* Sidebar Styles */
+.recruiter-sidebar {
+    position: fixed;
+    height: 100vh;
+    width: 250px;
+    background: linear-gradient(180deg, #ff1493 0%, #ff69b4 100%);
+    color: white;
+    transition: all 0.3s;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.recruiter-sidebar .nav-link {
+    color: white;
+    padding: 12px 20px;
+    transition: all 0.3s;
+}
+
+.recruiter-sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    padding-left: 25px;
+}
+
+.recruiter-sidebar .nav-link.active {
+    background: rgba(255,255,255,0.2);
+    border-left: 4px solid white;
+}
+
+.recruiter-sidebar .nav-link i {
+    width: 24px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+/* Stats Cards */
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .stat-icon {
+    width: 50px;
+    height: 50px;
+    background: #ff1493;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* Project Cards */
+.project-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+}
+
+.project-card .project-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.project-card .project-content {
+    padding: 20px;
+}
+
+.project-card .project-tags {
+    margin-top: 10px;
+}
+
+.project-card .project-tag {
+    background: #ffe4e1;
+    color: #ff1493;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+/* Student Profile Cards */
+.student-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+}
+
+.student-card .student-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Search and Filters */
+.search-bar {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.filter-tag {
+    background: #ff1493;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .recruiter-sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .recruiter-sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .mobile-toggle {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+    }
+}
+
+/* Custom Buttons */
+.btn-pink {
+    background: #ff1493;
+    color: white;
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-pink:hover {
+    background: #ff69b4;
+    color: white;
+    transform: translateY(-2px);
+}

@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - Details{% endblock %}
+
+{% block extrastyles %}
+<link rel="stylesheet" href="{% static 'accounts/recruiter_dashboard.css' %}">
+<style>
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+.project-header {
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.project-screenshot {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.project-stats {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+}
+
+.project-tags {
+    margin: 1rem 0;
+}
+
+.project-content {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.student-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.preview-frame {
+    width: 100%;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-container {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.preview-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.preview-toggle {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    background: #f3f4f6;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.preview-toggle.active {
+    background: #ff1493;
+    color: white;
+}
+
+.browser-frame {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.browser-header {
+    background: #f3f4f6;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.browser-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.browser-dot.red { background: #ff5f57; }
+.browser-dot.yellow { background: #ffbd2e; }
+.browser-dot.green { background: #28c940; }
+
+.browser-address {
+    flex: 1;
+    background: white;
+    padding: 0.25rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.9);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-error {
+    padding: 2rem;
+    text-align: center;
+    background: #fff5f5;
+    border-radius: 10px;
+    color: #e53e3e;
+}
+
+.link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.link-button i {
+    font-size: 1.1em;
+}
+
+.external-link {
+    margin-left: 0.5rem;
+    color: #666;
+    font-size: 0.9em;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'accounts/recruiter_sidebar.html' with active_tab='projects' %}
+
+<div class="main-content">
+<div class="container py-4">
+    <div class="project-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-3">{{ project.title }}</h2>
+                <div class="project-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-eye"></i>
+                        <span>{{ project.views.count }} views</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-heart"></i>
+                        <span>{{ project.likes.count }} likes</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>{{ project.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="project-tags">
+                    {% for tag in tags %}
+                    <span class="project-tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if project.output_link %}
+                <a href="{{ project.output_link }}" target="_blank" class="btn btn-pink mb-2 w-100" id="viewLiveBtn">
+                    <i class="fas fa-external-link-alt me-2"></i>View Live
+                </a>
+                {% endif %}
+                {% if project.project_link %}
+                <a href="{{ project.project_link }}" target="_blank" class="btn btn-outline-pink mb-2 w-100">
+                    <i class="fab fa-github me-2"></i>View Code
+                </a>
+                {% endif %}
+                <button class="btn btn-outline-pink w-100 share-project-btn" data-project-url="{{ request.path }}">
+                    <i class="fas fa-share me-2"></i>Share Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if project.screenshot %}
+    <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" class="project-screenshot mb-4">
+    {% endif %}
+
+    <div class="project-content">
+        <h4>Project Description</h4>
+        <p>{{ project.description }}</p>
+
+        {% if project.project_link or project.output_link %}
+        <div class="preview-section mt-4">
+            <h5>Project Preview</h5>
+            
+            <div class="preview-controls">
+                {% if project.output_link %}
+                <button class="preview-toggle" data-target="live">
+                    <i class="fas fa-globe me-2"></i>Live Demo
+                </button>
+                {% endif %}
+                {% if project.project_link %}
+                <button class="preview-toggle" data-target="code">
+                    <i class="fab fa-github me-2"></i>Code Repository
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="preview-container">
+                <div class="browser-frame">
+                    <div class="browser-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                        <div class="browser-address" id="previewUrl">
+                            Loading...
+                        </div>
+                        <a href="#" id="currentPreviewLink" target="_blank" class="external-link" rel="noopener">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                    <iframe id="previewFrame" class="preview-frame" 
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
+                            loading="lazy">
+                    </iframe>
+                </div>
+                <div id="previewLoading" class="preview-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin me-2"></i> Loading preview...
+                </div>
+                <div id="previewError" class="preview-error" style="display: none;">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle mb-3" style="font-size: 2rem;"></i>
+                        <p id="errorMessage" class="mb-3">Unable to load preview.</p>
+                        <a href="#" id="errorLink" target="_blank" class="btn btn-pink" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt me-2"></i>
+                            <span id="errorButtonText">Open in new tab</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="student-info mt-4">
+            <img src="{% if project.student.image %}{{ project.student.image.url }}{% else %}{% static 'accounts/default_profile.png' %}{% endif %}"
+                 alt="{{ project.student.student_name }}" class="student-image">
+            <div>
+                <h5 class="mb-1">{{ project.student.student_name }}</h5>
+                <p class="mb-0 text-muted">{{ project.student.course_details }}</p>
+            </div>
+            <div class="ms-auto">
+                <a href="{% url 'view_student_profile' project.student.id %}" class="btn btn-pink">View Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extrascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const previewFrame = document.getElementById('previewFrame');
+    const previewUrl = document.getElementById('previewUrl');
+    const currentPreviewLink = document.getElementById('currentPreviewLink');
+    const previewLoading = document.getElementById('previewLoading');
+    const previewError = document.getElementById('previewError');
+    const errorLink = document.getElementById('errorLink');
+    
+    let loadTimeout;
+    let currentUrl = '';
+    let activeTarget = 'live'; // Default to live demo if available
+
+    // Store URLs from Django template
+    const urls = {
+        live: '{{ project.output_link|escapejs }}',
+        code: '{{ project.project_link|escapejs }}'
+    };
+
+    // Update all link references
+    function updateLinks(url) {
+        previewUrl.textContent = url;
+        currentPreviewLink.href = url;
+        errorLink.href = url;
+    }
+
+    // Initialize the correct view based on available links
+    function initializePreview() {
+        const liveDemoButton = document.querySelector('.preview-toggle[data-target="live"]');
+        const codeButton = document.querySelector('.preview-toggle[data-target="code"]');
+        
+        // Determine which view to show initially
+        if (urls.live && liveDemoButton) {
+            activeTarget = 'live';
+            liveDemoButton.classList.add('active');
+            loadPreview(urls.live);
+        } else if (urls.code && codeButton) {
+            activeTarget = 'code';
+            codeButton.classList.add('active');
+            loadPreview(urls.code);
+        }
+    }
+
+    // Preview toggle functionality
+    const toggleButtons = document.querySelectorAll('.preview-toggle');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.dataset.target;
+            const url = urls[target];
+            
+            if (!url || target === activeTarget) return;
+            
+            // Update active state
+            toggleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update state and load preview
+            activeTarget = target;
+            currentUrl = url;
+            
+            // Update error button text based on type
+            const errorButtonText = document.getElementById('errorButtonText');
+            if (errorButtonText) {
+                errorButtonText.textContent = target === 'code' ? 'View on GitHub' : 'Visit Website';
+            }
+            
+            // Load preview
+            loadPreview(url);
+        });
+    });
+
+    function loadPreview(url) {
+        if (!url) return;
+        
+        // Clear any existing timeout
+        if (loadTimeout) {
+            clearTimeout(loadTimeout);
+        }
+
+        // Reset states
+        previewFrame.style.display = 'none';
+        previewError.style.display = 'none';
+        previewLoading.style.display = 'block';
+        
+        // Update URLs
+        updateLinks(url);
+
+        // Check if it's a GitHub URL
+        const isGitHub = url.toLowerCase().includes('github.com');
+        if (isGitHub) {
+            // For GitHub links, show a specialized message instead of trying to load
+            showError('github');
+            return;
+        }
+        
+        // Set a timeout to show error if loading takes too long
+        loadTimeout = setTimeout(() => {
+            if (previewLoading.style.display === 'block') {
+                showError('timeout');
+            }
+        }, 20000); // 20 second timeout
+
+        // Try to load the preview
+        if (previewFrame.src === url) {
+            // If the URL is the same, force reload
+            previewFrame.src = '';
+            setTimeout(() => {
+                previewFrame.src = url;
+            }, 100);
+        } else {
+            previewFrame.src = url;
+        }
+        
+        previewFrame.onload = function() {
+            clearTimeout(loadTimeout);
+            try {
+                // Check if we can access the frame's content
+                const frameContent = previewFrame.contentWindow || previewFrame.contentDocument;
+                if (!frameContent) throw new Error('No content');
+                
+                previewLoading.style.display = 'none';
+                previewFrame.style.display = 'block';
+                previewError.style.display = 'none';
+            } catch (e) {
+                console.error('Preview load error:', e);
+                showError('access');
+            }
+        };
+        
+        previewFrame.onerror = function(e) {
+            console.error('Preview error:', e);
+            showError('load');
+        };
+    }
+
+    function showError(reason = 'generic') {
+        clearTimeout(loadTimeout);
+        previewLoading.style.display = 'none';
+        previewFrame.style.display = 'none';
+        previewError.style.display = 'block';
+        
+        // Update error link
+        errorLink.href = currentUrl;
+
+        // Get error message element
+        const errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            switch (reason) {
+                case 'github':
+                    errorMessage.innerHTML = `
+                        GitHub repositories cannot be previewed directly.<br>
+                        Please click below to view the code on GitHub:
+                    `;
+                    break;
+                case 'timeout':
+                    errorMessage.innerHTML = `
+                        Preview is taking too long to load.<br>
+                        Please visit the site directly:
+                    `;
+                    break;
+                case 'access':
+                    errorMessage.innerHTML = `
+                        Unable to load preview due to security restrictions.<br>
+                        Please visit the site directly:
+                    `;
+                    break;
+                case 'load':
+                    errorMessage.innerHTML = `
+                        Unable to load the preview.<br>
+                        Please visit the site directly:
+                    `;
+                    break;
+                default:
+                    errorMessage.innerHTML = `
+                        Unable to display preview.<br>
+                        Please visit the site directly:
+                    `;
+            }
+        }
+    }
+
+    // Handle external link click
+    currentPreviewLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(currentUrl, '_blank');
+    });
+
+    // Initialize the preview on page load
+    initializePreview();
+
+    // Handle preview frame loading issues
+    previewFrame.addEventListener('error', showError);
+
+    // Share Project Button Handler
+    document.querySelector('.share-project-btn').addEventListener('click', function() {
+        const fullUrl = window.location.href;
+        
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            showToast('Project URL copied to clipboard!');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+            showToast('Error copying URL');
+        });
+    });
+
+    function showToast(message) {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1050;';
+            document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        `;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '1';
+        }, 10);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toastContainer.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
+    // Initial preview load
+    if (previewFrame && previewFrame.src) {
+        loadPreview(previewFrame.src);
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock content %}

@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extrastyles %}
+<style>
+    /* Layout fixes: ensure main content sits to the right of the fixed sidebar */
+    .admin-main-content {
+        margin-left: 320px !important; /* 60px extra gap from sidebar */
+        padding-left: 2.25rem !important;
+        padding-right: 2.25rem !important;
+    }
+    
+    @media (max-width: 1199.98px) {
+        .admin-main-content { 
+            margin-left: 300px !important; 
+        }
+    }
+    
+    @media (max-width: 991.98px) {
+        .admin-main-content { 
+            margin-left: 0 !important; 
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
+
+    .list-group {
+        margin-bottom: 1rem;
+    }
+
+    .list-group-item {
+        padding: 1rem;
+        border-radius: 0.5rem !important;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Notification wrapper and content styles */
+    .notification-wrapper {
+        width: 100%;
+    }
+
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-header {
+        width: 100%;
+    }
+
+    .notification-details {
+        margin-top: 0.5rem;
+        word-break: break-word;
+    }
+
+    .notification-icon {
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+        padding-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .list-group-item {
+            padding: 1rem;
+        }
+
+        .notification-header .d-flex {
+            gap: 0.5rem;
+        }
+
+        .notification-time {
+            width: 100%;
+            text-align: left;
+            margin-top: 0.25rem;
+            margin-left: 0 !important;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .notification-content {
+            width: 100%;
+        }
+
+        .notification-details {
+            margin-top: 0.75rem;
+        }
+
+        .bg-light.rounded {
+            padding: 0.75rem !important;
+        }
+
+        /* Fix for job title and message display */
+        .fw-bold.text-primary,
+        .text-muted {
+            word-break: break-word;
+            white-space: normal;
+            width: 100%;
+        }
+
+        /* Better spacing for notification elements */
+        .notification-icon {
+            margin-right: 0.75rem;
+            padding-top: 0.25rem;
+        }
+
+        /* Improved text readability */
+        .fw-bold {
+            font-size: 0.95rem;
+        }
+
+        .text-muted {
+            font-size: 0.9rem;
+        }
+    }
+    }
+
+    .notification-item {
+        transition: background-color 0.3s ease;
+    }
+
+    .notification-item:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .notification-unread {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    /* Improved notification icons */
+    .notification-icon {
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    /* Fix alignment of user images */
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+    }
+
+    /* Notification message container */
+    .notification-content {
+        flex: 1;
+        min-width: 0; /* Prevents flex items from overflowing */
+    }
+
+    /* Time stamp styling */
+    .notification-time {
+        color: #6c757d;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'accounts/admin_sidebar.css' %}">
+
+<button class="hamburger-btn d-lg-none" id="openSidebarBtn" aria-label="Open sidebar">
+    <svg width="32" height="32" fill="#222" viewBox="0 0 16 16"><path d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="logo-row">
+        <img src="{% static 'accounts/vtslogo.jpg' %}" alt="Logo">
+        <span>VTS Developers</span>
+        <button class="close-btn d-lg-none" id="closeSidebarBtn" aria-label="Close sidebar">&times;</button>
+    </div>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="{% url 'student_home' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.9937 11.9766C23.9937 12.8203 23.3687 13.4813 22.6603 13.4813H21.3268L21.356 20.9906C21.356 21.1172 21.3476 21.2437 21.3351 21.3703V22.125C21.3351 23.1609 20.5893 24 19.6683 24H19.0016C18.9558 24 18.9099 24 18.8641 23.9953C18.8058 24 18.7474 24 18.6891 24H17.3348H16.3347C15.4138 24 14.6679 23.1609 14.6679 22.125V21V18C14.6679 17.1703 14.072 16.5 13.3345 16.5H10.6676C9.93001 16.5 9.33413 17.1703 9.33413 18V21V22.125C9.33413 23.1609 8.58823 24 7.66732 24H6.66723H5.33795C5.27545 24 5.21294 23.9953 5.15044 23.9906C5.10043 23.9953 5.05043 24 5.00043 24H4.3337C3.41279 24 2.66689 23.1609 2.66689 22.125V16.875C2.66689 16.8328 2.66689 16.7859 2.67106 16.7438V13.4813H1.33345C0.583383 13.4813 0 12.825 0 11.9766C0 11.5547 0.125011 11.1797 0.416702 10.8516L11.1009 0.375C11.3926 0.046875 11.726 0 12.0177 0C12.3094 0 12.6427 0.09375 12.8928 0.328125L23.5353 10.8516C23.8687 11.1797 24.0354 11.5547 23.9937 11.9766Z" fill="currentColor"/>
+            </svg>
+            <span>Overview</span>
+        </a>
+        <a class="nav-link" href="{% url 'student_projects' %}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 5.12252V16.4996C13.5 17.3294 12.8297 17.9997 12 17.9997C11.1703 17.9997 10.5 17.3294 10.5 16.4996V5.12252L7.05938 8.56331C6.47344 9.14927 5.52188 9.14927 4.93594 8.56331C4.35 7.97734 4.35 7.02573 4.93594 6.43977L10.9359 0.439475C11.5219 -0.146492 12.4734 -0.146492 13.0594 0.439475L19.0594 6.43977C19.6453 7.02573 19.6453 7.97734 19.0594 8.56331C18.4734 9.14927 17.5219 9.14927 16.9359 8.56331L13.5 5.12252Z" fill="currentColor"/>
+                <path d="M3 16.4996H9C9 18.1544 10.3453 19.4998 12 19.4998C13.6547 19.4998 15 18.1544 15 16.4996H21C22.6547 16.4996 24 17.845 24 19.4998V20.9999C24 22.6546 22.6547 24 21 24H3C1.34531 24 0 22.6546 0 20.9999V19.4998C0 17.845 1.34531 16.4996 3 16.4996Z" fill="currentColor"/>
+            </svg>
+            <span>Projects</span>
+        </a>
+    </nav>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 btn-logout">Logout</button>
+    </form>
+</div>
+
+<div class="admin-main-content">
+    <h2>Notifications</h2>
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        <strong>Warning:</strong> An error occurred while loading notifications: {{ error_message }}
+    </div>
+    {% endif %}
+    <div class="list-group mt-3">
+        {% for notification in notifications %}
+        <div class="list-group-item {% if not notification.is_read %}list-group-item-light{% endif %}">
+            {% if notification.notification_type == 'like' %}
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill text-danger me-2" viewBox="0 0 16 16">
+                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                    </svg>
+                    <strong>{{ notification.sender.username }}</strong> liked your project 
+                    <a href="{% url 'student_project_detail' notification.project.id %}">{{ notification.project.title }}</a>
+                </div>
+                <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+            </div>
+            {% elif notification.notification_type == 'hire' %}
+            <div class="notification-wrapper">
+                <div class="d-flex flex-column">
+                    <div class="d-flex align-items-start">
+                        <div class="notification-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-briefcase-fill text-success" viewBox="0 0 16 16">
+                                <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z"/>
+                            </svg>
+                        </div>
+                        <div class="notification-content flex-grow-1">
+                            <div class="notification-header">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap w-100">
+                                    <div class="d-flex align-items-center flex-wrap">
+                                        <strong class="me-2">{{ notification.sender.username }}</strong>
+                                        <span class="text-muted">wants to hire you</span>
+                                    </div>
+                                    <small class="notification-time">{{ notification.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                            {% if notification.project %}
+                                <div class="notification-details mt-2">
+                                    <span class="text-muted">Project:</span>
+                                    <a href="{% url 'student_project_detail' notification.project.id %}" class="ms-1">{{ notification.project.title }}</a>
+                                </div>
+                            {% else %}
+                                {% if notification.data %}
+                                    <div class="notification-details bg-light rounded p-3 mt-2">
+                                        {% with data=notification.data|safe %}
+                                            {% if data %}
+                                                <div class="fw-bold text-primary">{{ data|safe }}</div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% elif notification.hiring_process %}
+                                    <div class="notification-details bg-light rounded p-3 mt-2">
+                                        <div class="fw-bold text-primary">{{ notification.hiring_process.job_title }}</div>
+                                        <div class="text-muted mt-1">{{ notification.hiring_process.message }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill text-primary me-2" viewBox="0 0 16 16">
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
+                    <strong>{{ notification.sender.username }}</strong> started following you
+                </div>
+                <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center text-muted mt-4">
+            <p>No notifications yet</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+{% endblock %}

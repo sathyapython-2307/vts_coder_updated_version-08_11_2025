@@ -1,0 +1,291 @@
+/* Styles for admin_home.html extracted from inline and <style> tags */
+
+body {
+    background: #fff !important;
+}
+    /* Mobile: sticky modal footer and scrollable modal body for Add Student form */
+    @media (max-width: 500px) {
+        .modal-content {
+            display: flex !important;
+            flex-direction: column !important;
+            max-height: 100vh !important;
+            overflow: hidden !important;
+        }
+        .modal-body {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            max-height: calc(100vh - 8rem) !important;
+        }
+        .modal-footer {
+            position: sticky !important;
+            bottom: 0 !important;
+            background: #fff !important;
+            z-index: 2 !important;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.04) !important;
+            padding-bottom: 1rem !important;
+        }
+    }
+.hamburger-btn {
+    display: block;
+}
+.close-btn {
+    display: block;
+}
+@media (min-width: 992px) {
+    .hamburger-btn, .close-btn, .sidebar-overlay {
+        display: none !important;
+    }
+}
+.hamburger-btn-custom {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 1100;
+    background: none;
+    border: none;
+    outline: none;
+}
+.sidebar-overlay-custom {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 1099;
+}
+.close-btn-custom {
+    margin-left: auto;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: #222;
+}
+.svg-middle {
+    vertical-align: middle;
+}
+.overview-label {
+    vertical-align: middle;
+    margin-left: 8px;
+}
+.projects-label {
+    vertical-align: middle;
+    margin-left: 8px;
+    font-weight: 700;
+}
+.profile-label {
+    vertical-align: middle;
+    margin-left: 8px;
+}
+.logout-form-custom {
+    width: 100%;
+    margin-top: auto;
+    padding: 1.5rem 2rem 1.2rem 2rem;
+}
+.btn-logout-custom {
+    font-weight: 600;
+}
+.btn-search-dev-admin {
+    background: #ff0080;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255,0,128,0.08);
+    border: none;
+}
+.dashboard-cards-custom {
+    border-radius: 18px;
+    padding: 24px 12px 12px 12px;
+}
+.dashboard-card-custom {
+    background: #ffeeda;
+    border-radius: 18px;
+    min-width: 220px;
+    min-height: 140px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.dashboard-title {
+    font-size: 1.2rem;
+}
+.dashboard-badge-blue {
+    background: #e0eaff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+.dashboard-value {
+    font-size: 2.2rem;
+}
+.dashboard-growth {
+    font-size: 1rem;
+    color: #1dbf73;
+    font-weight: 500;
+}
+.dashboard-growth-muted {
+    color: #888;
+    font-weight: 400;
+}
+
+/* Force modal layout fixes for iPad Pro */
+#addStudentModal {
+    padding: 0 !important;
+}
+
+#addStudentModal .modal-dialog {
+    width: 90% !important;
+    max-width: none !important;
+    height: 90vh !important;
+    margin: 5vh auto !important;
+    transform: none !important;
+}
+
+#addStudentModal .modal-content {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+#addStudentModal .modal-header {
+    flex: 0 0 auto !important;
+    padding: 1rem !important;
+    background: white !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+#addStudentModal .modal-body {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 1rem !important;
+    position: relative !important;
+}
+
+#addStudentModal .modal-footer {
+    flex: 0 0 auto !important;
+    padding: 1rem !important;
+    background: white !important;
+    border-top: 1px solid #dee2e6 !important;
+    position: relative !important;
+}
+
+/* iPad Pro (12.9-inch) vertical scroll fix */
+@media only screen 
+and (min-width: 1024px) 
+and (max-width: 1366px) 
+and (-webkit-min-device-pixel-ratio: 2) {
+    .modal-dialog.modal-dialog-centered {
+        max-height: 90vh;
+        margin: 1rem auto;
+    }
+
+    .modal-content {
+        max-height: 85vh;
+    }
+
+    .modal-body {
+        height: calc(100vh - 200px);
+        overflow-y: scroll;
+        padding-right: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-body form {
+        padding-bottom: 60px; /* Space for footer */
+    }
+
+    .modal-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Show scrollbar for better UX */
+    .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #666;
+    }
+}
+
+/* iPad Pro and tablet modal fixes */
+#addStudentModal.modal {
+    overflow: hidden !important;
+}
+
+#addStudentModal .modal-dialog {
+    height: calc(100% - 60px) !important;
+    margin: 30px auto !important;
+    max-width: 90% !important;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+#addStudentModal .modal-content {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+#addStudentModal .modal-header {
+    flex-shrink: 0 !important;
+}
+
+#addStudentModal .modal-body {
+    flex: 1 1 auto !important;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 1rem !important;
+}
+
+#addStudentModal .modal-footer {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+    z-index: 1020 !important;
+}
+
+/* Specific iPad Pro adjustments */
+@media only screen and (min-width: 1024px) and (max-width: 1366px) and (-webkit-min-device-pixel-ratio: 2) {
+    #addStudentModal.modal {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+    }
+    
+    #addStudentModal .modal-dialog {
+        height: 90vh !important;
+        margin: 5vh auto !important;
+    }
+    
+    #addStudentModal .modal-body {
+        max-height: none !important;
+    }
+}

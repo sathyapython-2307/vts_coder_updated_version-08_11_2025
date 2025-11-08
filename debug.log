@@ -1,0 +1,79 @@
+2025-11-05 10:21:11,467 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\core\settings.py changed, reloading.
+2025-11-05 10:21:31,893 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\accounts\views.py changed, reloading.
+2025-11-05 10:22:05,021 - django.security.csrf - WARNING - Forbidden (CSRF token from POST incorrect.): /
+2025-11-05 10:22:08,779 - django.security.csrf - WARNING - Forbidden (CSRF token from POST incorrect.): /
+2025-11-05 10:22:46,535 - recruiter_debug - DEBUG - Login attempt - Email: recruiter1@gmail.com, User Type: recruiter
+2025-11-05 10:22:47,640 - recruiter_debug - DEBUG - User authenticated - Username: recruiter1@gmail.com
+2025-11-05 10:22:47,640 - recruiter_debug - DEBUG - User permissions - Superuser: False, Staff: True
+2025-11-05 10:22:47,667 - recruiter_debug - DEBUG - Recruiter profile found - Status: approved
+2025-11-05 10:22:47,751 - recruiter_debug - INFO - Recruiter login successful - recruiter1@gmail.com
+2025-11-05 10:22:47,991 - recruiter_debug - DEBUG - ============ Recruiter Home Access ============
+2025-11-05 10:22:47,992 - recruiter_debug - DEBUG - Request Method: GET
+2025-11-05 10:22:47,992 - recruiter_debug - DEBUG - Request User: recruiter1@gmail.com
+2025-11-05 10:22:47,993 - recruiter_debug - DEBUG - User is authenticated: True
+2025-11-05 10:22:47,995 - recruiter_debug - DEBUG - Session ID: ujthdq020j66koci4ouwnhohycru8wlb
+2025-11-05 10:22:47,997 - recruiter_debug - DEBUG - Is superuser: False
+2025-11-05 10:22:47,999 - recruiter_debug - DEBUG - Is staff: True
+2025-11-05 10:22:48,005 - recruiter_debug - DEBUG - Recruiter found - Company: rc
+2025-11-05 10:22:48,006 - recruiter_debug - DEBUG - Recruiter status: approved
+2025-11-05 10:22:48,043 - django.request - WARNING - Forbidden: /recruiter-home/
+2025-11-05 10:22:59,692 - django.security.csrf - WARNING - Forbidden (CSRF token from POST incorrect.): /
+2025-11-05 10:23:21,290 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\core\settings.py changed, reloading.
+2025-11-05 10:24:27,823 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\core\settings.py changed, reloading.
+2025-11-05 10:24:57,625 - django.security.csrf - WARNING - Forbidden (CSRF cookie not set.): /
+2025-11-05 10:25:10,148 - recruiter_debug - DEBUG - Login attempt - Email: recruiter1@gmail.com, User Type: recruiter
+2025-11-05 10:25:11,169 - recruiter_debug - WARNING - Failed login attempt - Email: recruiter1@gmail.com
+2025-11-05 10:25:15,418 - recruiter_debug - DEBUG - Login attempt - Email: recruiter1@gmail.com, User Type: recruiter
+2025-11-05 10:25:16,529 - recruiter_debug - WARNING - Failed login attempt - Email: recruiter1@gmail.com
+2025-11-05 10:25:50,489 - recruiter_debug - DEBUG - Login attempt - Email: recruiter1@gmail.com, User Type: recruiter
+2025-11-05 10:25:51,540 - recruiter_debug - DEBUG - User authenticated - Username: recruiter1@gmail.com
+2025-11-05 10:25:51,541 - recruiter_debug - DEBUG - User permissions - Superuser: False, Staff: True
+2025-11-05 10:25:51,542 - recruiter_debug - DEBUG - Recruiter profile found - Status: approved
+2025-11-05 10:25:51,638 - recruiter_debug - INFO - Recruiter login successful - recruiter1@gmail.com
+2025-11-05 10:25:51,752 - recruiter_debug - DEBUG - ============ Recruiter Home Access ============
+2025-11-05 10:25:51,753 - recruiter_debug - DEBUG - Request Method: GET
+2025-11-05 10:25:51,753 - recruiter_debug - DEBUG - Request User: recruiter1@gmail.com
+2025-11-05 10:25:51,754 - recruiter_debug - DEBUG - User is authenticated: True
+2025-11-05 10:25:51,755 - recruiter_debug - DEBUG - Session ID: ujthdq020j66koci4ouwnhohycru8wlb
+2025-11-05 10:25:51,756 - recruiter_debug - DEBUG - Is superuser: False
+2025-11-05 10:25:51,756 - recruiter_debug - DEBUG - Is staff: True
+2025-11-05 10:25:51,759 - recruiter_debug - DEBUG - Recruiter found - Company: rc
+2025-11-05 10:25:51,764 - recruiter_debug - DEBUG - Recruiter status: approved
+2025-11-05 10:25:51,910 - django.request - WARNING - Forbidden: /recruiter-home/
+2025-11-05 10:26:17,361 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\accounts\templatetags\__init__.py changed, reloading.
+2025-11-05 10:27:00,998 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\accounts\templatetags\custom_filters.py changed, reloading.
+2025-11-05 10:27:47,338 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\accounts\apps.py changed, reloading.
+2025-11-05 10:28:51,139 - recruiter_debug - DEBUG - ============ Recruiter Home Access ============
+2025-11-05 10:28:51,140 - recruiter_debug - DEBUG - Request Method: GET
+2025-11-05 10:28:51,140 - recruiter_debug - DEBUG - Request User: recruiter1@gmail.com
+2025-11-05 10:28:51,141 - recruiter_debug - DEBUG - User is authenticated: True
+2025-11-05 10:28:51,141 - recruiter_debug - DEBUG - Session ID: ujthdq020j66koci4ouwnhohycru8wlb
+2025-11-05 10:28:51,141 - recruiter_debug - DEBUG - Is superuser: False
+2025-11-05 10:28:51,141 - recruiter_debug - DEBUG - Is staff: True
+2025-11-05 10:28:51,146 - recruiter_debug - DEBUG - Recruiter found - Company: rc
+2025-11-05 10:28:51,146 - recruiter_debug - DEBUG - Recruiter status: approved
+2025-11-05 10:28:51,650 - django.request - WARNING - Forbidden: /recruiter-home/
+2025-11-05 10:28:52,741 - django.request - WARNING - Not Found: /favicon.ico
+2025-11-05 10:28:55,175 - recruiter_debug - DEBUG - ============ Recruiter Home Access ============
+2025-11-05 10:28:55,177 - recruiter_debug - DEBUG - Request Method: GET
+2025-11-05 10:28:55,177 - recruiter_debug - DEBUG - Request User: recruiter1@gmail.com
+2025-11-05 10:28:55,178 - recruiter_debug - DEBUG - User is authenticated: True
+2025-11-05 10:28:55,178 - recruiter_debug - DEBUG - Session ID: ujthdq020j66koci4ouwnhohycru8wlb
+2025-11-05 10:28:55,178 - recruiter_debug - DEBUG - Is superuser: False
+2025-11-05 10:28:55,178 - recruiter_debug - DEBUG - Is staff: True
+2025-11-05 10:28:55,180 - recruiter_debug - DEBUG - Recruiter found - Company: rc
+2025-11-05 10:28:55,181 - recruiter_debug - DEBUG - Recruiter status: approved
+2025-11-05 10:28:55,210 - django.request - WARNING - Forbidden: /recruiter-home/
+2025-11-05 10:28:55,397 - django.request - WARNING - Not Found: /favicon.ico
+2025-11-05 10:28:55,952 - recruiter_debug - DEBUG - ============ Recruiter Home Access ============
+2025-11-05 10:28:55,955 - recruiter_debug - DEBUG - Request Method: GET
+2025-11-05 10:28:55,957 - recruiter_debug - DEBUG - Request User: recruiter1@gmail.com
+2025-11-05 10:28:55,957 - recruiter_debug - DEBUG - User is authenticated: True
+2025-11-05 10:28:55,958 - recruiter_debug - DEBUG - Session ID: ujthdq020j66koci4ouwnhohycru8wlb
+2025-11-05 10:28:55,959 - recruiter_debug - DEBUG - Is superuser: False
+2025-11-05 10:28:55,964 - recruiter_debug - DEBUG - Is staff: True
+2025-11-05 10:28:55,967 - recruiter_debug - DEBUG - Recruiter found - Company: rc
+2025-11-05 10:28:55,967 - recruiter_debug - DEBUG - Recruiter status: approved
+2025-11-05 10:28:55,992 - django.request - WARNING - Forbidden: /recruiter-home/
+2025-11-05 10:28:56,167 - django.request - WARNING - Not Found: /favicon.ico
+2025-11-05 10:29:13,303 - django.utils.autoreload - INFO - D:\vts_coder_updated_version-24_10_2025--main\debug_log.py changed, reloading.

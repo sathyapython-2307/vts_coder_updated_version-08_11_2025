@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% comment %} Styles moved to static/accounts/student_home.css per request (no inline styles) {% endcomment %}
+
+{% block content %}
+<section class="student-hero">
+    <div class="student-card card">
+        <div class="card-body text-center">
+            <div class="d-flex align-items-center justify-content-center flex-column">
+                <div class="profile-badge" aria-hidden="true">{{ user.username|slice:":1"|upper }}</div>
+                <h2 class="welcome-title">Welcome, {{ user.username }}!</h2>
+                <p class="welcome-sub">You are logged in as a superuser.</p>
+            </div>
+
+            <div class="student-meta">
+                <div class="meta-pill">Projects: {{ user.projects.count|default:0 }}</div>
+                <div class="meta-pill">Followers: {{ user.followers.count|default:0 }}</div>
+                <div class="meta-pill">Notifications: {{ unread_notifications_count|default:0 }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('openSidebarBtn');
+    var closeBtn = document.getElementById('closeSidebarBtn');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() {
+        sidebar.classList.add('sidebar-open');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.style.display = 'block';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+    if (openBtn) openBtn.onclick = openSidebar;
+    if (closeBtn) closeBtn.onclick = closeSidebar;
+    if (overlay) overlay.onclick = closeSidebar;
+});
+</script>
+{% include 'accounts/add_student_modal.html' %}
+{% endblock %}
