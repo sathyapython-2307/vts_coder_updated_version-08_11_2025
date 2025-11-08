@@ -25,7 +25,7 @@ import dj_database_url
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*','.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
