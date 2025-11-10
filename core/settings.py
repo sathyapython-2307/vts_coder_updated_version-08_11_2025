@@ -25,7 +25,18 @@ import dj_database_url
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['*','.onrender.com', 'localhost', '127.0.0.1']
+
+# Configure allowed hosts from an environment variable. Default to localhost for
+# local development. Avoid using a wildcard '*' in production.
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS if h.strip()]
+
+# Prevent accidental insecure production runs: require a real secret key when
+# DEBUG is False.
+if not DEBUG and SECRET_KEY == 'unsafe-secret-key':
+    from django.core.exceptions import ImproperlyConfigured
+
+    raise ImproperlyConfigured('DJANGO_SECRET_KEY environment variable must be set in production')
 
 
 # Application definition
@@ -151,9 +162,14 @@ if not DEBUG:
 # Trusted origins for CSRF (set via env or extend as needed)
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 if CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS = [x.strip() for x in CSRF_TRUSTED_ORIGINS.split(',')]
+    CSRF_TRUSTED_ORIGINS = [x.strip() for x in CSRF_TRUSTED_ORIGINS.split(',') if x.strip()]
 else:
+    # If not provided, try to auto-populate HTTPS origins for production hosts.
     CSRF_TRUSTED_ORIGINS = []
+    if not DEBUG:
+        for host in ALLOWED_HOSTS:
+            if host and host not in ('localhost', '127.0.0.1', '*'):
+                CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
