@@ -5,7 +5,45 @@ services:
     plan: free
     runtime: python3.9
     buildCommand: pip install --no-cache-dir -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
-    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --forwarded-allow-ips='*' --access-logfile '-' --error-logfile '-' --log-level debug
+    domains:
+      - vts-coder-updated-version-08-11-2025.onrender.com
+    headers:
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains; preload
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+      - key: SESSION_COOKIE_SECURE
+        value: "True"
+      - key: CSRF_COOKIE_SECURE
+        value: "True"
+      - key: SECURE_HSTS_SECONDS
+        value: "31536000"
+      - key: SECURE_HSTS_INCLUDE_SUBDOMAINS
+        value: "True"
+      - key: SECURE_HSTS_PRELOAD
+        value: "True"
     autoDeploy: true
     envVars:
       - key: DJANGO_SECRET_KEY
