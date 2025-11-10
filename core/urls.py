@@ -20,12 +20,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from core.views import health
+from core.views import health, maintenance
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Temporary: route root to a safe maintenance page while we clean up
+    path('', maintenance),
+    # keep accounts URLs available under /accounts/
     path('accounts/', include('accounts.urls')),
-    path('', include('accounts.urls')),
     path('health/', health),
 ]
 

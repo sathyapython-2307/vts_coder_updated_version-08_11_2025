@@ -79,7 +79,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.security_middleware.SecurityHeadersMiddleware',
+    # custom security middleware disabled temporarily while we investigate 500 errors
+    # 'core.security_middleware.SecurityHeadersMiddleware',
 ]
 
 # Security Settings
