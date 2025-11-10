@@ -27,8 +27,31 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Configure allowed hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') + ['localhost', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+ALLOWED_HOSTS = []
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+else:
+    ALLOWED_HOSTS.extend(['vetricoders-django.onrender.com', '.onrender.com'])
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = ['https://vetricoders-django.onrender.com', 'https://*.onrender.com']
+
+# Set this to True only in development
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# Force HTTPS
+SECURE_SSL_REDIRECT = not DEBUG
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Security settings
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
 # Prevent accidental insecure production runs: require a real secret key when
 # DEBUG is False.

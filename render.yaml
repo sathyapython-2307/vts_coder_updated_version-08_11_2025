@@ -3,9 +3,10 @@ services:
     name: vetricoders-django
     env: python
     buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
-    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --forwarded-allow-ips='*' --proxy-protocol
-    envVars:
+    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --log-level=debug --forwarded-allow-ips='*'
     autoDeploy: true
+    domains:
+      - vetricoders-django.onrender.com
     envVars:
       - key: DJANGO_SECRET_KEY
         # IMPORTANT: Replace this placeholder with a strong random SECRET_KEY in Render's UI
@@ -18,9 +19,11 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: ".onrender.com"
+        value: "vetricoders-django.onrender.com,*.onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://vetricoders-django.onrender.com"
+        value: "https://vetricoders-django.onrender.com,https://*.onrender.com"
+      - key: SECURE_PROXY_SSL_HEADER
+        value: "HTTP_X_FORWARDED_PROTO,https"
       - key: SECURE_SSL_REDIRECT
         value: "True"
       - key: SESSION_COOKIE_SECURE

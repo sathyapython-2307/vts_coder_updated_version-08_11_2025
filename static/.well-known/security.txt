@@ -1,0 +1,4 @@
+Contact: mailto:security@vetricoders-django.onrender.com
+Expires: 2026-11-10T00:00:00.000Z
+Preferred-Languages: en
+Security-TXT-Version: 1.0
