@@ -27,14 +27,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Configure allowed hosts
-ALLOWED_HOSTS = []
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
-else:
-    ALLOWED_HOSTS.extend(['vetricoders-django.onrender.com', '.onrender.com'])
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'vts-coder-updated-version-08-11-2025.onrender.com', '.onrender.com']
 
 # CSRF settings
-CSRF_TRUSTED_ORIGINS = ['https://vetricoders-django.onrender.com', 'https://*.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://vts-coder-updated-version-08-11-2025.onrender.com', 'https://*.onrender.com']
 
 # Set this to True only in development
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
