@@ -24,9 +24,11 @@ from core.views import health, maintenance
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Temporary: route root to a safe maintenance page while we clean up
-    path('', maintenance),
-    # keep accounts URLs available under /accounts/
+    # Restore root to the application's normal URLconf (accounts app). This
+    # makes the login/home pages available at `/` while still keeping the
+    # accounts URLs under `/accounts/` as well.
+    path('', include('accounts.urls')),
+    # keep accounts URLs available under /accounts/ for backwards compatibility
     path('accounts/', include('accounts.urls')),
     path('health/', health),
 ]

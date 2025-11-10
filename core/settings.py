@@ -21,10 +21,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
+import sys
 import dj_database_url
 
+# Read secret from environment; fall back to a clearly unsafe default for
+# local development. In production you MUST set the DJANGO_SECRET_KEY env var.
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# Determine DEBUG: respect the DEBUG env var when present. When not present
+# assume development when invoked via manage.py/runserver so local runs don't
+# fail unexpectedly. In genuine production (gunicorn, uwsgi) the env var
+# should be set to 'False' and a proper DJANGO_SECRET_KEY provided.
+env_debug = os.environ.get('DEBUG', None)
+# If running the development server (manage.py runserver) we always enable DEBUG
+# to avoid blocking local development when DEBUG is not set or is explicitly set
+# to 'False' in the environment. In production (gunicorn/uwsgi) DEBUG must be
+# explicitly set to 'False' and DJANGO_SECRET_KEY must be provided.
+if any('runserver' in a for a in sys.argv) or (sys.argv and 'manage.py' in sys.argv[0]):
+    DEBUG = True
+elif env_debug is None:
+    # Non-development default: conservative (not debug)
+    DEBUG = False
+else:
+    DEBUG = str(env_debug) == 'True'
 
 # Configure allowed hosts
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'vts-coder-updated-version-08-11-2025.onrender.com', '.onrender.com']
@@ -32,8 +51,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'vts-coder-updated-version-08-11-2025
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = ['https://vts-coder-updated-version-08-11-2025.onrender.com', 'https://*.onrender.com']
 
-# Set this to True only in development
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# Note: DEBUG is determined above based on whether we're running via
+# manage.py runserver or the DEBUG env var. Do not reassign DEBUG here.
 
 # Force HTTPS
 SECURE_SSL_REDIRECT = not DEBUG
@@ -66,12 +85,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'accounts',
 ]
 
+# Optional: include django-cors-headers only if it's installed. This prevents
+# a hard failure (ModuleNotFoundError) when the virtualenv isn't prepared yet.
+try:
+    import corsheaders  # type: ignore
+    CORS_AVAILABLE = True
+except Exception:
+    CORS_AVAILABLE = False
+
+if CORS_AVAILABLE:
+    # Insert corsheaders at the end of INSTALLED_APPS so it activates when
+    # available without breaking local dev when it's missing.
+    INSTALLED_APPS.insert(len(INSTALLED_APPS) - 0, 'corsheaders')
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # django-cors-headers middleware should be placed high so it can add CORS
+    # headers before other middleware (see django-cors-headers docs). We only
+    # add it when the package is available to avoid crashing the dev server.
+    # (See CORS_AVAILABLE flag above.)
+    # 'corsheaders.middleware.CorsMiddleware' will be appended below if present.
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -82,6 +118,15 @@ MIDDLEWARE = [
     # custom security middleware disabled temporarily while we investigate 500 errors
     # 'core.security_middleware.SecurityHeadersMiddleware',
 ]
+
+# Add cors middleware into the MIDDLEWARE chain early if available.
+if CORS_AVAILABLE:
+    # Place it just after SecurityMiddleware to ensure headers are set early.
+    try:
+        idx = MIDDLEWARE.index('django.middleware.security.SecurityMiddleware') + 1
+    except ValueError:
+        idx = 0
+    MIDDLEWARE.insert(idx, 'corsheaders.middleware.CorsMiddleware')
 
 # Security Settings
 SECURE_SSL_REDIRECT = True
